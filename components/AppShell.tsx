@@ -2,6 +2,7 @@
 
 import { type ReactNode } from "react";
 import Link from "next/link";
+import { useAuth, UserButton } from "@clerk/nextjs";
 import { navItems, Logo, type Page } from "./nav";
 import { Sun, Moon, Bell, Search, Sparkles } from "lucide-react";
 import { useTheme } from "@/lib/theme";
@@ -16,6 +17,7 @@ export function AppShell({
   children: ReactNode;
 }) {
   const { theme, toggle } = useTheme();
+  const { isLoaded, isSignedIn } = useAuth();
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -56,13 +58,27 @@ export function AppShell({
         </nav>
         <div className="border-t border-token p-3">
           <div className="flex items-center gap-3 rounded-card bg-white/[0.03] p-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ai-gradient text-sm font-semibold text-white">
-              A
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-text-primary">Alex Morgan</p>
-              <p className="truncate text-xs text-text-muted">Free Plan</p>
-            </div>
+            {isLoaded && isSignedIn ? (
+              <>
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ai-gradient text-sm font-semibold text-white">
+                  A
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-text-primary">Your account</p>
+                  <p className="truncate text-xs text-text-muted">Manage profile and sessions</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ai-gradient text-sm font-semibold text-white">
+                  A
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-text-primary">Guest access</p>
+                  <p className="truncate text-xs text-text-muted">Sign in to sync progress</p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </aside>
@@ -93,6 +109,11 @@ export function AppShell({
               <Bell size={18} />
               <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-primary" />
             </button>
+            {isLoaded && isSignedIn ? (
+              <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-token bg-surface">
+                <UserButton />
+              </div>
+            ) : null}
             <button
               onClick={() => onNavigate("interviews")}
               className="btn-primary ml-1 hidden text-sm sm:inline-flex"
