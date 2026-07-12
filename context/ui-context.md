@@ -1,233 +1,527 @@
 # UI Context
 
-## Design Philosophy
-
-The application should feel like a modern SaaS platform used by professionals preparing for interviews. The interface should emphasize clarity, trust, and focus rather than visual complexity. Colors should be used intentionally to communicate state, hierarchy, and actions. Animations should be subtle, and whitespace should be generous to improve readability.
-
----
-
-# Color System
-
-## Primary Colors
-
-| Token                | Hex       | Usage                                     |
-| -------------------- | --------- | ----------------------------------------- |
-| `primary`            | `#2563EB` | Primary buttons, links, active navigation |
-| `primary-hover`      | `#1D4ED8` | Hover state                               |
-| `primary-active`     | `#1E40AF` | Active state                              |
-| `primary-foreground` | `#FFFFFF` | Text on primary buttons                   |
+> This document defines the visual language and design system for IntervueX.
+>
+> Every page, component, animation, and interaction should follow these
+> guidelines to maintain a consistent experience across the application.
 
 ---
 
-## Secondary Colors
+# Design Philosophy
 
-| Token                  | Hex       | Usage             |
-| ---------------------- | --------- | ----------------- |
-| `secondary`            | `#4F46E5` | Secondary actions |
-| `secondary-hover`      | `#4338CA` | Hover state       |
-| `secondary-foreground` | `#FFFFFF` | Button text       |
+IntervueX is a premium AI-powered interview preparation platform.
+
+The interface should feel modern, intelligent, trustworthy, and highly
+professional.
+
+Users should immediately feel they are using a polished SaaS product rather
+than a student project.
+
+The experience should resemble products like:
+
+- Linear
+- Vercel
+- Stripe Dashboard
+- Clerk
+- Notion AI
+- Raycast
+
+The design should prioritize:
+
+- Simplicity
+- Clarity
+- Focus
+- Accessibility
+- Consistency
+- Performance
+
+Color should communicate hierarchy rather than decoration.
+
+Whitespace should be generous.
+
+Animations should be subtle.
 
 ---
 
-## AI Accent Colors
+# Theme
 
-These colors are reserved for AI-related features.
+Dark Mode is the primary experience.
 
-| Token               | Hex       | Usage         |
-| ------------------- | --------- | ------------- |
-| `ai-primary`        | `#7C3AED` | AI branding   |
-| `ai-secondary`      | `#A855F7` | AI highlights |
-| `ai-gradient-start` | `#7C3AED` | AI gradients  |
-| `ai-gradient-end`   | `#2563EB` | AI gradients  |
+Light Mode is fully supported.
 
-Use these only for:
+Dark mode should not use pure black.
 
-* AI-generated reports
-* AI insights
-* AI feedback
-* AI badges
-
-Avoid using AI colors for standard CRUD operations.
+Instead, use layered neutral surfaces to create depth.
 
 ---
+
+# Brand Identity
+
+IntervueX is primarily identified through **Indigo**.
+
+Blue is reserved for technical workflows.
+
+Purple and Cyan represent AI-powered functionality.
+
+The application should never become visually overwhelming.
+
+The interface should feel calm and premium.
+
+---
+
+# Brand Colors
+
+| Token | Value | Usage |
+|--------|-------|------|
+| primary | #4F46E5 | Primary Brand |
+| primary-hover | #4338CA | Hover |
+| primary-active | #3730A3 | Active |
+| primary-foreground | #FFFFFF | Button Text |
+
+---
+
+# Secondary Colors
+
+| Token | Value |
+|--------|-------|
+| secondary | #8B5CF6 |
+| secondary-hover | #7C3AED |
+| secondary-foreground | #FFFFFF |
+
+---
+
+# AI Color Palette
+
+These colors are **ONLY** used for AI-powered experiences.
+
+Examples
+
+- AI Interview
+- AI Report
+- AI Feedback
+- AI Insights
+- AI Assistant
+- AI Evaluation
+
+Never use AI colors for standard CRUD pages.
+
+| Token | Value |
+|--------|-------|
+| ai-primary | #8B5CF6 |
+| ai-secondary | #A855F7 |
+| ai-highlight | #22D3EE |
+| ai-gradient-start | #4F46E5 |
+| ai-gradient-middle | #8B5CF6 |
+| ai-gradient-end | #22D3EE |
+
+Preferred Gradient
+
+```
+Indigo
+
+↓
+
+Purple
+
+↓
+
+Cyan
+```
+
+---
+
+# Semantic Colors
 
 ## Success
 
-| Token           | Hex       | Usage               |
-| --------------- | --------- | ------------------- |
-| `success`       | `#22C55E` | Success messages    |
-| `success-light` | `#DCFCE7` | Success backgrounds |
+| Token | Value |
+|--------|-------|
+| success | #22C55E |
+| success-light | #DCFCE7 |
 
 ---
 
 ## Warning
 
-| Token           | Hex       | Usage               |
-| --------------- | --------- | ------------------- |
-| `warning`       | `#F59E0B` | Warnings            |
-| `warning-light` | `#FEF3C7` | Warning backgrounds |
+| Token | Value |
+|--------|-------|
+| warning | #F59E0B |
+| warning-light | #FEF3C7 |
 
 ---
 
-## Error
+## Danger
 
-| Token          | Hex       | Usage             |
-| -------------- | --------- | ----------------- |
-| `danger`       | `#EF4444` | Errors            |
-| `danger-light` | `#FEE2E2` | Error backgrounds |
+| Token | Value |
+|--------|-------|
+| danger | #EF4444 |
+| danger-light | #FEE2E2 |
 
 ---
 
 ## Information
 
-| Token        | Hex       | Usage                |
-| ------------ | --------- | -------------------- |
-| `info`       | `#0EA5E9` | Informational alerts |
-| `info-light` | `#E0F2FE` | Info backgrounds     |
+| Token | Value |
+|--------|-------|
+| info | #0EA5E9 |
+| info-light | #E0F2FE |
 
 ---
 
-## Neutral Palette
+# Dark Theme
 
-| Token            | Hex       | Usage                       |
-| ---------------- | --------- | --------------------------- |
-| `background`     | `#FFFFFF` | Main application background |
-| `surface`        | `#F8FAFC` | Cards and containers        |
-| `surface-hover`  | `#F1F5F9` | Hovered cards               |
-| `border`         | `#E2E8F0` | Borders                     |
-| `divider`        | `#CBD5E1` | Dividers                    |
-| `text-primary`   | `#0F172A` | Primary text                |
-| `text-secondary` | `#475569` | Secondary text              |
-| `text-muted`     | `#64748B` | Muted text                  |
-| `disabled`       | `#94A3B8` | Disabled elements           |
+| Token | Value |
+|--------|-------|
+| background | #09090B |
+| background-secondary | #111118 |
+| surface | #18181B |
+| surface-hover | #202026 |
+| elevated | #27272A |
+| border | rgba(255,255,255,.08) |
+| divider | rgba(255,255,255,.06) |
+| text-primary | #FAFAFA |
+| text-secondary | #D4D4D8 |
+| text-muted | #A1A1AA |
+| disabled | #71717A |
+
+---
+
+# Light Theme
+
+| Token | Value |
+|--------|-------|
+| background | #FFFFFF |
+| surface | #F8FAFC |
+| surface-hover | #F1F5F9 |
+| border | #E2E8F0 |
+| divider | #CBD5E1 |
+| text-primary | #0F172A |
+| text-secondary | #475569 |
+| text-muted | #64748B |
+| disabled | #94A3B8 |
 
 ---
 
 # Dashboard Colors
 
-| Token          | Hex       | Usage           |
-| -------------- | --------- | --------------- |
-| `chart-blue`   | `#2563EB` | Analytics       |
-| `chart-green`  | `#22C55E` | Success metrics |
-| `chart-yellow` | `#F59E0B` | Medium metrics  |
-| `chart-red`    | `#EF4444` | Low metrics     |
-| `chart-purple` | `#8B5CF6` | AI metrics      |
+Each dashboard widget should have its own accent.
 
----
-
-# Typography
-
-| Element    | Font  | Size | Weight |
-| ---------- | ----- | ---- | ------ |
-| Display    | Geist | 48px | 700    |
-| H1         | Geist | 36px | 700    |
-| H2         | Geist | 30px | 600    |
-| H3         | Geist | 24px | 600    |
-| H4         | Geist | 20px | 600    |
-| Body Large | Geist | 18px | 400    |
-| Body       | Geist | 16px | 400    |
-| Small      | Geist | 14px | 400    |
-| Caption    | Geist | 12px | 400    |
-
-### Font Stack
-
-```css
-font-family:
-"Geist",
-"Inter",
-system-ui,
-sans-serif;
-```
-
----
-
-# Border Radius
-
-| Token        | Value | Usage       |
-| ------------ | ----- | ----------- |
-| `radius-xs`  | 4px   | Badges      |
-| `radius-sm`  | 6px   | Inputs      |
-| `radius-md`  | 8px   | Cards       |
-| `radius-lg`  | 12px  | Buttons     |
-| `radius-xl`  | 16px  | Large cards |
-| `radius-2xl` | 24px  | Dialogs     |
-
-Default radius:
-
-```
-12px
-```
-
----
-
-# Shadows
-
-| Token       | Value          |
-| ----------- | -------------- |
-| `shadow-sm` | Small cards    |
-| `shadow-md` | Standard cards |
-| `shadow-lg` | Dialogs        |
-| `shadow-xl` | Popovers       |
-
-Keep shadows subtle.
-
----
-
-# Spacing Scale
-
-| Token      | Value |
-| ---------- | ----- |
-| `space-1`  | 4px   |
-| `space-2`  | 8px   |
-| `space-3`  | 12px  |
-| `space-4`  | 16px  |
-| `space-5`  | 20px  |
-| `space-6`  | 24px  |
-| `space-8`  | 32px  |
-| `space-10` | 40px  |
-| `space-12` | 48px  |
-| `space-16` | 64px  |
-
-Never use arbitrary spacing values.
-
----
-
-# Iconography
-
-| Category | Library      |
-| -------- | ------------ |
-| Icons    | Lucide React |
+| Widget | Color |
+|---------|-------|
+| Interviews | #4F46E5 |
+| Coding | #2563EB |
+| Analytics | #22D3EE |
+| AI Reports | #8B5CF6 |
+| Performance | #10B981 |
+| Upcoming | #F59E0B |
+| Failed | #EF4444 |
 
 ---
 
 # Charts
 
-| Library  | Purpose             |
-| -------- | ------------------- |
-| Recharts | Analytics & Reports |
+| Metric | Color |
+|--------|-------|
+| Indigo | #4F46E5 |
+| Blue | #2563EB |
+| Purple | #8B5CF6 |
+| Cyan | #22D3EE |
+| Green | #10B981 |
+| Amber | #F59E0B |
+| Red | #EF4444 |
 
 ---
 
-# Animation
+# Typography
 
-| Library       | Usage                                            |
-| ------------- | ------------------------------------------------ |
-| Framer Motion | Page transitions, dialogs, dropdowns, onboarding |
+Primary Font
 
-Animations should enhance usability, not distract from content.
+Geist
+
+Fallback
+
+Inter
+
+system-ui
+
+sans-serif
+
+| Style | Size | Weight |
+|--------|------|--------|
+| Display | 56 | 700 |
+| H1 | 40 | 700 |
+| H2 | 32 | 600 |
+| H3 | 24 | 600 |
+| H4 | 20 | 600 |
+| Body Large | 18 | 400 |
+| Body | 16 | 400 |
+| Small | 14 | 400 |
+| Caption | 12 | 400 |
+
+---
+
+# Border Radius
+
+| Component | Radius |
+|------------|--------|
+| Badge | 999px |
+| Input | 10px |
+| Button | 12px |
+| Card | 18px |
+| Dialog | 24px |
+
+---
+
+# Shadows
+
+Use subtle shadows only.
+
+```
+shadow-sm
+
+shadow-md
+
+shadow-lg
+
+shadow-xl
+```
+
+Never use large dark shadows.
+
+Depth should come from surfaces rather than shadows.
+
+---
+
+# Glassmorphism
+
+Allowed only for
+
+- Hero dashboard
+- AI widgets
+- Dialogs
+
+Example
+
+```
+background:
+
+rgba(255,255,255,.03)
+
+backdrop-filter:
+
+blur(20px)
+
+border:
+
+1px solid rgba(255,255,255,.06)
+```
+
+---
+
+# Background Effects
+
+Allowed
+
+Large Indigo Glow
+
+Large Cyan Glow
+
+Purple Radial Glow
+
+Very subtle grid texture
+
+Very subtle noise texture
+
+Never use animated backgrounds.
+
+---
+
+# Buttons
+
+Primary
+
+Solid Indigo
+
+Hover
+
+Darker Indigo
+
+Secondary
+
+Outline
+
+Ghost
+
+Transparent
+
+Danger
+
+Red
+
+AI
+
+Indigo → Purple Gradient
+
+Buttons should have
+
+- Smooth hover
+- Soft shadow
+- Active scale 0.98
+- Transition under 200ms
+
+---
+
+# Cards
+
+Cards are the primary organizational unit.
+
+Cards should have
+
+- Neutral surface
+- Thin border
+- 18px radius
+- Soft shadow
+- Hover elevation
+- Smooth transition
+
+Cards should never feel flat.
+
+---
+
+# Icons
+
+Library
+
+Lucide React
+
+Rules
+
+- Always 20px or 24px
+- Use currentColor
+- Keep icon usage consistent
+
+---
+
+# Motion
+
+Library
+
+Framer Motion
+
+Animation Duration
+
+180–250ms
+
+Hover
+
+translateY(-2px)
+
+Scale
+
+1.02 maximum
+
+Entrance
+
+Fade + slight upward motion
+
+Avoid
+
+- Bounce
+- Elastic
+- Long animations
+
+Motion should reinforce usability rather than attract attention.
 
 ---
 
 # Accessibility
 
-* Maintain a minimum WCAG AA contrast ratio.
-* Do not rely on color alone to communicate status.
-* Every interactive element must have visible focus states.
-* Buttons and form controls should maintain a minimum touch target of 44×44 pixels.
-* Ensure the interface is fully usable with keyboard navigation.
+Maintain WCAG AA contrast.
+
+Keyboard navigation required.
+
+Visible focus states.
+
+Touch targets
+
+44 × 44 minimum.
+
+Never communicate status using color alone.
 
 ---
 
-# Theme Philosophy
+# Component Philosophy
 
-The UI should resemble a modern SaaS product rather than a college project. It should prioritize clarity, consistency, and professionalism, with restrained use of color and motion. AI-specific colors should be reserved for AI-generated content to create a clear visual distinction between standard application features and AI-enhanced experiences.
+Every component should be
+
+- Reusable
+- Accessible
+- Responsive
+- Theme-aware
+- Typed
+- Minimal
+
+Every component should support
+
+- Loading
+- Disabled
+- Empty
+- Error
+
+States.
+
+---
+
+# Visual Language
+
+IntervueX should feel like an intelligent workspace.
+
+The interface should emphasize depth through layering rather than bright colors.
+
+Most of the application should remain neutral.
+
+Accent colors should guide attention.
+
+AI features should stand out naturally through gradients and subtle glows rather than excessive color usage.
+
+Users should feel focused and calm while preparing for interviews.
+
+---
+
+# Inspiration
+
+Design inspiration
+
+- Linear
+- Vercel
+- Clerk
+- Stripe
+- Notion AI
+- Raycast
+- GitHub Dashboard
+
+Do not imitate any one product directly.
+
+Combine the best ideas into a unique IntervueX identity.
+
+---
+
+# Overall Feel
+
+The product should communicate
+
+Professional.
+
+Minimal.
+
+Fast.
+
+Modern.
+
+Premium.
+
+Intelligent.
+
+Confident.
+
+Every screen should look polished enough to be mistaken for a production SaaS application.
