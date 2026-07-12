@@ -24,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full`} suppressHydrationWarning>
-      <body className="min-h-full flex flex-col bg-background font-sans text-foreground">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark h-full`} suppressHydrationWarning>
+      <body className="min-h-full flex flex-col bg-background font-sans text-text-primary">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
