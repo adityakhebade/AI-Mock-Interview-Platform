@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { SignInButton, SignUpButton, useAuth, UserButton } from "@clerk/nextjs";
 import {
   Sparkles,
   ArrowRight,
@@ -93,6 +94,7 @@ const fadeUp = {
 
 export default function LandingPage() {
   const router = useRouter();
+  const { isLoaded, isSignedIn } = useAuth();
   const goToDashboard = () => router.push("/dashboard");
 
   return (
@@ -117,13 +119,27 @@ export default function LandingPage() {
           </a>
         </nav>
         <div className="flex items-center gap-3">
-          <button onClick={goToDashboard} className="btn-ghost text-sm">
-            Sign in
-          </button>
-          <button onClick={goToDashboard} className="btn-primary text-sm">
-            Get started
-            <ArrowRight size={16} />
-          </button>
+          {isLoaded && isSignedIn ? (
+            <div className="flex items-center gap-3">
+              <UserButton />
+              <button onClick={goToDashboard} className="btn-primary text-sm">
+                Go to dashboard
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          ) : (
+            <>
+              <SignInButton mode="modal">
+                <button className="btn-ghost text-sm">Sign in</button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="btn-primary text-sm">
+                  Get started
+                  <ArrowRight size={16} />
+                </button>
+              </SignUpButton>
+            </>
+          )}
         </div>
       </header>
       <section className="relative z-10 mx-auto max-w-7xl px-4 pb-24 pt-16 md:px-8 md:pt-24">
@@ -144,14 +160,33 @@ export default function LandingPage() {
             detailed reports, and track your progress to land your dream role.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <button onClick={goToDashboard} className="btn-ai w-full sm:w-auto">
-              <Sparkles size={18} />
-              Start a mock interview
-            </button>
-            <button onClick={goToDashboard} className="btn-secondary w-full sm:w-auto">
-              View dashboard
-              <ArrowRight size={16} />
-            </button>
+            {isLoaded && isSignedIn ? (
+              <>
+                <button onClick={goToDashboard} className="btn-ai w-full sm:w-auto">
+                  <Sparkles size={18} />
+                  Start a mock interview
+                </button>
+                <button onClick={goToDashboard} className="btn-secondary w-full sm:w-auto">
+                  View dashboard
+                  <ArrowRight size={16} />
+                </button>
+              </>
+            ) : (
+              <>
+                <SignUpButton mode="modal">
+                  <button className="btn-ai w-full sm:w-auto">
+                    <Sparkles size={18} />
+                    Start a mock interview
+                  </button>
+                </SignUpButton>
+                <SignInButton mode="modal">
+                  <button className="btn-secondary w-full sm:w-auto">
+                    View dashboard
+                    <ArrowRight size={16} />
+                  </button>
+                </SignInButton>
+              </>
+            )}
           </div>
           <div className="mt-6 flex items-center justify-center gap-6 text-xs text-text-muted">
             <span className="flex items-center gap-1.5">
