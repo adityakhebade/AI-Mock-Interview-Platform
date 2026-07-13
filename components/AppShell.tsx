@@ -2,7 +2,7 @@
 
 import { type ReactNode } from "react";
 import Link from "next/link";
-import { useAuth, UserButton } from "@clerk/nextjs";
+import { useAuth, useUser, UserButton } from "@clerk/nextjs";
 import { navItems, Logo, type Page } from "./nav";
 import { Sun, Moon, Bell, Search, Sparkles } from "lucide-react";
 import { useTheme } from "@/lib/theme";
@@ -18,6 +18,11 @@ export function AppShell({
 }) {
   const { theme, toggle } = useTheme();
   const { isLoaded, isSignedIn } = useAuth();
+  const { user } = useUser();
+
+  const avatarInitial = (user?.firstName?.[0] || user?.username?.[0] || '?').toUpperCase();
+  const displayName = user?.fullName || user?.username || 'Your account';
+  const email = user?.primaryEmailAddress?.emailAddress || '';
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -61,17 +66,17 @@ export function AppShell({
             {isLoaded && isSignedIn ? (
               <>
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ai-gradient text-sm font-semibold text-white">
-                  A
+                  {avatarInitial}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-text-primary">Your account</p>
-                  <p className="truncate text-xs text-text-muted">Manage profile and sessions</p>
+                  <p className="truncate text-sm font-medium text-text-primary">{displayName}</p>
+                  <p className="truncate text-xs text-text-muted">{email || 'Manage profile and sessions'}</p>
                 </div>
               </>
             ) : (
               <>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ai-gradient text-sm font-semibold text-white">
-                  A
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-surface text-sm font-semibold text-text-muted border border-token">
+                  ?
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-text-primary">Guest access</p>
