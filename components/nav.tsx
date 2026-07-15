@@ -1,4 +1,6 @@
-import { MessageSquare, BarChart3, FileText, LayoutDashboard, Sparkles, Settings } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { MessageSquare, BarChart3, FileText, LayoutDashboard, Settings } from "lucide-react";
 import { type ReactNode } from "react";
 
 export type Page = "landing" | "dashboard" | "interviews" | "resumes" | "reports" | "settings";
@@ -18,20 +20,25 @@ export const navItems: NavItem[] = [
 ];
 
 export function Logo({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
-  const dims = { sm: "h-7 w-7", md: "h-8 w-8", lg: "h-10 w-10" };
-  const iconSize = { sm: 16, md: 18, lg: 22 };
-  const text = { sm: "text-sm", md: "text-base", lg: "text-xl" };
+  const dims = { sm: 28, md: 32, lg: 40 };
 
   return (
-    <div className="flex items-center gap-2.5">
-      <div
-        className={`${dims[size]} relative flex items-center justify-center rounded-btn bg-ai-gradient shadow-glow`}
+    <Link href="/" className="flex items-center gap-2.5 focus-ring rounded-btn">
+      <Image
+        src="/logo.png"
+        alt="IntervueX logo"
+        width={dims[size]}
+        height={dims[size]}
+        className="object-contain"
+        priority
+      />
+      <span
+        className={`font-semibold tracking-tight text-text-primary ${
+          size === "sm" ? "text-sm" : size === "lg" ? "text-xl" : "text-base"
+        }`}
       >
-        <Sparkles size={iconSize[size]} className="text-white" />
-      </div>
-      <span className={`${text[size]} font-semibold tracking-tight text-text-primary`}>
         Intervue<span className="text-ai-gradient">X</span>
       </span>
-    </div>
+    </Link>
   );
 }
