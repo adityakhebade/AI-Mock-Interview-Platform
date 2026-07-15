@@ -138,12 +138,7 @@ export default function LandingPage() {
 
           <div className="flex items-center gap-3">
             {isLoaded && isSignedIn ? (
-              <>
-                <UserButton />
-                <button onClick={goToDashboard} className="btn-primary text-sm">
-                  Go to dashboard <ArrowRight size={15} />
-                </button>
-              </>
+              <UserButton />
             ) : (
               <>
                 <SignInButton mode="modal">
