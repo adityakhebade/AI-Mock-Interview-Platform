@@ -1,7 +1,6 @@
 "use client";
 
 import { type ReactNode } from "react";
-import Link from "next/link";
 import { useAuth, useUser, UserButton } from "@clerk/nextjs";
 import { navItems, Logo, type Page } from "./nav";
 import { Sun, Moon, Bell, Search, Sparkles } from "lucide-react";
@@ -28,9 +27,7 @@ export function AppShell({
     <div className="flex min-h-screen bg-background">
       <aside className="hidden w-60 shrink-0 flex-col border-r border-token bg-background-secondary md:flex">
         <div className="px-5 py-5">
-          <Link href="/" className="focus-ring rounded-btn">
-            <Logo />
-          </Link>
+          <Logo />
         </div>
         <nav className="flex-1 px-3 py-2">
           <p className="px-3 pb-2 pt-3 text-[11px] font-medium uppercase tracking-wider text-text-muted">
