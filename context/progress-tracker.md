@@ -35,17 +35,54 @@ change.
   - `settings/page.tsx`: replaced hardcoded "Alex Morgan" / "alex.morgan@example.com" with live data from `useUser()` (Clerk). Avatar initial derived from real user name. Security section updated to reflect Clerk-managed auth.
   - `AppShell.tsx`: replaced hardcoded "A" avatar initial with real initial from `useUser()`. Sidebar now shows real display name and email.
 - **Replaced hero browser mockup with Companies Marquee (`CompaniesMarquee.tsx`):**
-  - Created `components/CompaniesMarquee.tsx` — a fully reusable, self-contained component.
-  - 24 companies listed: Google, Microsoft, Amazon, Meta, Apple, Netflix, Adobe, Uber, Airbnb, Stripe, Atlassian, Oracle, Salesforce, Nvidia, Intel, IBM, Samsung, Accenture, TCS, Infosys, Wipro, Cognizant, Deloitte, Capgemini.
-  - Each company rendered in a premium glassmorphism card with branded color logo tile, company name, soft border, hover lift animation, and purple glow on hover.
-  - Infinite seamless marquee: list duplicated, CSS `translate3d` keyframe animation at 32 s/loop, pauses on hover, no visible jump.
-  - Left/right edge fade masks using gradient overlays.
-  - Centered heading section with "Top Companies" label, H2, and subtitle.
-  - `app/page.tsx`: removed large browser mockup `motion.div` and `Zap` import; replaced with `<CompaniesMarquee />` wrapped in a fade-up `motion.div`.
+  - Created `components/home/CompaniesMarquee.tsx` — infinite horizontal marquee using Framer Motion `useAnimationFrame`.
+  - Fixed marquee animation (CSS keyframe approach failed twice due to Tailwind v4 purging — switched to Framer Motion).
+  - 6 companies (Google, Microsoft, Amazon, Meta, Apple, Netflix) in 180×140px premium glassmorphism cards with hover scale/glow.
+  - Logo container 64×64px with `object-contain`, centered, loads from `/public/logos/*.png`.
+  - Marquee scrolls right-to-left, pauses on hover via `useRef(paused)`, seamless loop with duplicated list.
+  - `app/page.tsx`: removed large browser mockup block, replaced with `<CompaniesMarquee />`.
+- **Reorganized landing page layout:**
+  - New section order: Navbar, Hero (full viewport), Statistics, Companies Marquee, Features, How It Works, Testimonials, Final CTA, Footer.
+  - Hero no longer contains the marquee — marquee moved to dedicated section below stats.
+  - Added inter-section spacing: Hero→Stats (stripe flush), Stats→Companies (120px), Companies→Features (140px), Features→How It Works (140px), How It Works→Testimonials (140px), Testimonials→CTA (140px), CTA→Footer (100px).
+  - Redesigned final CTA: gradient background, box-shadow glow, `rounded-[32px]`, badge, larger headline, two CTAs, social proof line.
+- **Refactored layout with global container and 8px spacing system:**
+  - Created single global layout container `C = "mx-auto w-full max-w-[1280px] px-6 sm:px-8 md:px-12"` applied to every section's inner wrapper.
+  - Created `SectionHeading` component encoding the identical badge → 24px → title → 24px → subtitle → 64px → content rhythm.
+  - All spacing uses 8px units. All arbitrary margin/padding values replaced with consistent scale.
+  - Cards: all use `gap-8` (32px), `flex flex-col p-8`, icon `mb-5`, title direct, desc `mt-3`.
+  - Testimonial cards: `flex flex-col`, quote has `flex-1` so avatar pinned to bottom, stars always `mb-5` at top.
+  - Footer: logo left, copyright center, nav right, all inside `C` with `py-8`.
+  - `CompaniesMarquee`: heading removed from component (page owns heading), fade masks widened to `w-56` desktop.
+- **Logo updates and navigation improvements:**
+  - Removed "Go to dashboard" button from navbar signed-in state — only `UserButton` remains.
+  - Replaced generated logo (gradient square + Sparkles icon) with Next.js `<Image>` loading `/public/logo.png`.
+  - Wrapped entire `<Logo>` in a Next.js `<Link href="/">` so clicking/hovering redirects to home page. Works in navbar, app shell sidebar, footer (all use same component).
+- **Git branch management:**
+  - Created and pushed branch `feat/landing-page-redesign` based on `clerk-auth-pr`.
+  - Two commits:
+    - `4d14524`: All changes for tasks 1-5 (Tailwind fixes, mock data removal, marquee, layout, spacing).
+    - `707ff38`: Logo updates and navbar cleanup (task 6).
+  - Total: 22 files changed across both commits.
+  - PR link: `https://github.com/adityakhebade/AI-Mock-Interview-Platform/pull/new/feat/landing-page-redesign`.
 
 ## In Progress
 
 - None.
+
+## Recently Completed
+
+- **Fixed nested anchor tag hydration error:**
+  - Removed redundant `Link` wrapper around `<Logo />` in `AppShell.tsx`
+  - The Logo component already handles its own navigation internally
+  - Removed unused `Link` import from AppShell component
+  - Fixed React hydration error: "cannot be a descendant of <a>"
+- **Replaced PNG logo with custom SVG logo:**
+  - Created a premium custom SVG logo combining speech bubble, code brackets, and X
+  - Uses the IntervueX brand gradient (Purple → Blue → Cyan)
+  - Logo scales properly at all sizes (sm, md, lg)
+  - Removed dependency on external logo.png file
+  - The "X" in "IntervueX" now has the same gradient as the icon
 
 ## Next Up
 
