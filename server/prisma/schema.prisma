@@ -1,0 +1,180 @@
+// IntervueX MVP Database Schema
+// This is the Prisma schema for the IntervueX AI Mock Interview Platform
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum InterviewStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum InterviewDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum QuestionType {
+  CODING
+  BEHAVIORAL
+  TECHNICAL
+}
+
+enum QuestionStatus {
+  PENDING
+  ACTIVE
+  ANSWERED
+  SKIPPED
+}
+
+enum SubmissionStatus {
+  DRAFT
+  FINAL
+}
+
+enum ResumeStatus {
+  UPLOADED
+  ANALYZED
+  FAILED
+}
+
+// ============================================================================
+// MODELS
+// ============================================================================
+
+model User {
+  id          String   @id @default(cuid())
+  clerkId     String   @unique
+  email       String
+  displayName String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  interviews Interview[]
+  resumes    Resume[]
+
+  @@index([clerkId])
+  @@index([email])
+  @@map("users")
+}
+
+model Interview {
+  id              String             @id @default(cuid())
+  userId          String
+  role            String
+  difficulty      InterviewDifficulty
+  durationMinutes Int
+  language        String?
+  status          InterviewStatus    @default(DRAFT)
+  startedAt       DateTime?
+  endedAt         DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  // Relations
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questions InterviewQuestion[]
+  evaluation Evaluation?
+
+  @@index([userId, createdAt])
+  @@index([userId, status])
+  @@map("interviews")
+}
+
+model InterviewQuestion {
+  id                 String            @id @default(cuid())
+  interviewId        String
+  prompt             String            @db.Text
+  type               QuestionType
+  difficulty         InterviewDifficulty
+  expectedAnswer     String?           @db.Text
+  evaluationCriteria Json?
+  position           Int
+  status             QuestionStatus    @default(PENDING)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  // Relations
+  interview   Interview    @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  submissions Submission[]
+
+  @@unique([interviewId, position])
+  @@index([interviewId])
+  @@map("interview_questions")
+}
+
+model Submission {
+  id          String           @id @default(cuid())
+  questionId  String
+  content     String           @db.Text
+  language    String?
+  status      SubmissionStatus @default(DRAFT)
+  submittedAt DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // Relations
+  question InterviewQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId, updatedAt])
+  @@map("submissions")
+}
+
+model Evaluation {
+  id                   String    @id @default(cuid())
+  interviewId          String    @unique
+  overallScore         Decimal?  @db.Decimal(5, 2)
+  codingScore          Decimal?  @db.Decimal(5, 2)
+  communicationScore   Decimal?  @db.Decimal(5, 2)
+  problemSolvingScore  Decimal?  @db.Decimal(5, 2)
+  feedback             String?   @db.Text
+  strengths            Json?
+  improvements         Json?
+  rawProviderResult    Json?
+  generatedAt          DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  // Relations
+  interview Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+
+  @@index([interviewId])
+  @@map("evaluations")
+}
+
+model Resume {
+  id            String       @id @default(cuid())
+  userId        String
+  fileName      String
+  storageKey    String       @unique
+  mimeType      String
+  fileSizeBytes Int
+  status        ResumeStatus @default(UPLOADED)
+  atsScore      Decimal?     @db.Decimal(5, 2)
+  analysis      Json?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([storageKey])
+  @@map("resumes")
+}

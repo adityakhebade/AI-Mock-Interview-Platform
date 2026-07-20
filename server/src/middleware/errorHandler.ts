@@ -22,8 +22,7 @@ const errorHandler = (
 ): void => {
   let statusCode = 500;
   let message = 'Internal server error';
-  const isOperational =
-    err instanceof AppError ? err.isOperational : false;
+  const isOperational = err instanceof AppError ? err.isOperational : false;
 
   if (err instanceof AppError) {
     statusCode = err.statusCode;
