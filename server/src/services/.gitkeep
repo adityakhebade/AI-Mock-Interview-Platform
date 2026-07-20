@@ -1,0 +1,9 @@
+# Services Directory
+
+Business logic implementation files will be placed here.
+
+Example:
+- user.service.ts
+- interview.service.ts
+- resume.service.ts
+- report.service.ts
