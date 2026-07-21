@@ -10,6 +10,7 @@ import {
   logger,
   errorHandler,
   notFoundHandler,
+  clerkAuthMiddleware,
 } from './middleware/index.js';
 import routes from './routes/index.js';
 
@@ -33,6 +34,9 @@ if (config.nodeEnv === 'development') {
 } else {
   app.use(logger);
 }
+
+// Clerk authentication middleware (must run before routes that call getAuth)
+app.use(clerkAuthMiddleware);
 
 // API routes
 app.use(`/api/${config.apiVersion}`, routes);

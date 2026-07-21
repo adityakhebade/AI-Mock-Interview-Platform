@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE and AI agent folders
+.vscode/
+.agents/
+.kiro/
+.claude/
+.windsurf/
+skills-lock.json
