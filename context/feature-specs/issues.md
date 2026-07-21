@@ -1,4 +1,61 @@
-# Issues Fixed
+<!-- # Issues Fixed
+
+## Fixed: TypeScript Build Error - Missing @types/ws
+
+**Problem**: Next.js build failed with TypeScript error:
+```
+Could not find a declaration file for module 'ws'
+```
+
+**Root Cause**: The `ws` package (WebSocket library for Neon database adapter) was installed but its TypeScript type definitions were missing.
+
+**Solution**: Installed `@types/ws` as a dev dependency in the server package.
+
+**Files Changed**:
+- `server/package.json` - Added `@types/ws` to devDependencies
+
+**Status**: ✅ Fixed
+
+---
+
+## Fixed: Neon Adapter Type Error
+
+**Problem**: TypeScript build failed with error:
+```
+Argument of type 'Pool' is not assignable to parameter of type 'PoolConfig'
+```
+
+**Root Cause**: Incorrect usage of `PrismaNeon` adapter constructor. The adapter expects a `PoolConfig` object with `connectionString` property, not a `Pool` instance.
+
+**Solution**: 
+1. Configured `neonConfig.webSocketConstructor = ws` globally for Node.js environment
+2. Pass connection string as object: `new PrismaNeon({ connectionString })`
+3. Removed unnecessary `Pool` instantiation
+
+**Files Changed**:
+- `server/src/config/prisma.ts` - Fixed Neon adapter configuration
+
+**Status**: ✅ Fixed
+
+---
+
+## Fixed: Test Setup Read-Only Property Error
+
+**Problem**: TypeScript build failed with error:
+```
+Cannot assign to 'NODE_ENV' because it is a read-only property
+```
+
+**Root Cause**: In strict TypeScript mode, `process.env` properties are typed as read-only. Test setup file was trying to assign values directly.
+
+**Solution**: Used type assertion `(process.env as any)` to allow assignments in test environment setup. Added ESLint disable comments for the `any` type usage since it's necessary for test configuration.
+
+**Files Changed**:
+- `server/tests/setup.ts` - Added type assertions for environment variable assignments
+
+**Status**: ✅ Fixed
+
+---
 
 ## Fixed: Logo Not Displaying Properly
 
@@ -90,4 +147,30 @@ Keep the UI polished by displaying meaningful empty-state components instead of 
 If any demo data is required for development, make it available only through a separate development seed script and never show it automatically to users.
 Verify that after creating a fresh account, the dashboard is completely empty except for onboarding content and begins populating only as the user creates interviews or performs actions.
 Audit the entire codebase for hardcoded data (mock, demo, sample, dummy, fake, seed, static arrays, JSON fixtures, etc.) and replace them with real database queries.
-The final application should feel like a production SaaS product rather than a demo application.
+The final application should feel like a production SaaS product rather than a demo application. -->
+
+
+
+
+> intervuex@0.1.0 build
+> next build
+
+▲ Next.js 16.2.10 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 16.2s
+  Running TypeScript  .Failed to type check.
+
+./server/src/config/prisma.ts:4:16
+Type error: Could not find a declaration file for module 'ws'. 'D:/ADITYA/Projects/intervuex/server/node_modules/ws/wrapper.mjs' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/ws` if it exists or add a new declaration (.d.ts) file containing `declare module 'ws';`
+
+  2 | import { PrismaNeon } from '@prisma/adapter-neon';
+  3 | import { Pool } from '@neondatabase/serverless';
+> 4 | import ws from 'ws';
+    |                ^
+  5 |
+  6 | const globalForPrisma = globalThis as unknown as {
+  7 |   prisma: PrismaClient | undefined;
+Next.js build worker exited with code: 1 and signal: null

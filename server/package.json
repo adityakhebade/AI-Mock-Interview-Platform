@@ -11,7 +11,9 @@
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\""
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
   },
   "keywords": [
     "express",
@@ -22,6 +24,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@clerk/express": "^2.1.44",
+    "@neondatabase/serverless": "^1.1.0",
+    "@prisma/adapter-neon": "^7.9.0",
     "@prisma/client": "^7.9.0",
     "compression": "^1.7.5",
     "cookie-parser": "^1.4.7",
@@ -30,21 +35,28 @@
     "express": "^5.0.1",
     "helmet": "^8.0.0",
     "morgan": "^1.10.0",
-    "prisma": "^7.9.0"
+    "prisma": "^7.9.0",
+    "ws": "^8.21.1"
   },
   "devDependencies": {
     "@types/compression": "^1.7.5",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/jest": "^30.0.0",
     "@types/morgan": "^1.9.10",
     "@types/node": "^22.10.5",
+    "@types/supertest": "^7.2.1",
+    "@types/ws": "^8.18.1",
     "@typescript-eslint/eslint-plugin": "^8.23.0",
     "@typescript-eslint/parser": "^8.23.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
+    "jest": "^30.4.2",
     "prettier": "^3.4.2",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.11",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }

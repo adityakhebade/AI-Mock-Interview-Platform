@@ -1,14 +1,24 @@
 import { Request, Response, NextFunction } from 'express';
-import { ApiResponse } from '../types/response.js';
+import { ErrorCode, type ApiErrorResponse } from '../types/errors.js';
+import type { ApiResponse } from '../types/response.js';
 
 class AppError extends Error {
   statusCode: number;
+  code: string;
   isOperational: boolean;
+  details?: unknown;
 
-  constructor(message: string, statusCode: number) {
+  constructor(
+    message: string,
+    statusCode: number,
+    code: string = ErrorCode.INTERNAL_ERROR,
+    details?: unknown
+  ) {
     super(message);
     this.statusCode = statusCode;
+    this.code = code;
     this.isOperational = true;
+    this.details = details;
 
     Error.captureStackTrace(this, this.constructor);
   }
@@ -21,23 +31,34 @@ const errorHandler = (
   _next: NextFunction
 ): void => {
   let statusCode = 500;
+  let code: string = ErrorCode.INTERNAL_ERROR;
   let message = 'Internal server error';
+  let details: unknown;
   const isOperational = err instanceof AppError ? err.isOperational : false;
 
   if (err instanceof AppError) {
     statusCode = err.statusCode;
+    code = err.code;
     message = err.message;
+    details = err.details;
   }
 
   if (process.env.NODE_ENV === 'development') {
     console.error('Error:', err);
   }
 
-  const response: ApiResponse = {
+  const response: ApiErrorResponse = {
     success: false,
-    message,
-    errors: isOperational ? [message] : ['An unexpected error occurred'],
+    error: {
+      code: code as ApiErrorResponse['error']['code'],
+      message,
+      ...(details !== undefined ? { details } : {}),
+    },
   };
+
+  if (!isOperational && process.env.NODE_ENV === 'development') {
+    response.error.message = err.message;
+  }
 
   res.status(statusCode).json(response);
 };
