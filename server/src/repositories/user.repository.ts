@@ -31,4 +31,14 @@ export const userRepository = {
       where: { id },
     });
   },
+
+  updateProfile: async (
+    id: string,
+    data: { displayName?: string; imageUrl?: string }
+  ): Promise<User> => {
+    return prisma.user.update({
+      where: { id },
+      data,
+    });
+  },
 };

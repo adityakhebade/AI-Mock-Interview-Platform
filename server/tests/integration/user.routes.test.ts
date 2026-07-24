@@ -12,6 +12,7 @@ const mockFetchClerkUserProfile = jest.fn();
 const mockFindByClerkId = jest.fn<() => Promise<User | null>>();
 const mockUpsertFromClerkProfile = jest.fn<() => Promise<User>>();
 const mockFindById = jest.fn<() => Promise<User | null>>();
+const mockUpdateProfile = jest.fn<() => Promise<User>>();
 
 jest.unstable_mockModule('@clerk/express', () => ({
   clerkMiddleware: () => (_req: unknown, _res: unknown, next: () => void) =>
@@ -33,6 +34,7 @@ jest.unstable_mockModule('../../src/repositories/user.repository.js', () => ({
     findByClerkId: mockFindByClerkId,
     upsertFromClerkProfile: mockUpsertFromClerkProfile,
     findById: mockFindById,
+    updateProfile: mockUpdateProfile,
   },
 }));
 
@@ -144,6 +146,80 @@ describe('user routes', () => {
       data: {
         id: 'user_internal_1',
         clerkId: 'clerk_user_1',
+      },
+    });
+  });
+
+  it('PATCH /users/me updates the user profile', async () => {
+    authenticateAs('clerk_user_1');
+    mockFindByClerkId.mockResolvedValue(baseUser);
+    mockUpdateProfile.mockResolvedValue({
+      ...baseUser,
+      displayName: 'Updated Name',
+      imageUrl: 'https://new-image.com/avatar.jpg',
+      updatedAt: new Date('2026-07-21T12:00:00.000Z'),
+    });
+
+    const response = await request(app)
+      .patch('/api/v1/users/me')
+      .set('Authorization', 'Bearer test-token')
+      .send({
+        displayName: 'Updated Name',
+        imageUrl: 'https://new-image.com/avatar.jpg',
+      })
+      .expect(200);
+
+    expect(response.body.success).toBe(true);
+    expect(response.body.data.displayName).toBe('Updated Name');
+    expect(response.body.data.imageUrl).toBe('https://new-image.com/avatar.jpg');
+    expect(response.body.message).toBe('Profile updated successfully');
+  });
+
+  it('PATCH /users/me validates display name length', async () => {
+    authenticateAs('clerk_user_1');
+
+    const response = await request(app)
+      .patch('/api/v1/users/me')
+      .set('Authorization', 'Bearer test-token')
+      .send({
+        displayName: '',
+      })
+      .expect(400);
+
+    expect(response.body.success).toBe(false);
+    expect(response.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
+  });
+
+  it('PATCH /users/me validates image URL format', async () => {
+    authenticateAs('clerk_user_1');
+
+    const response = await request(app)
+      .patch('/api/v1/users/me')
+      .set('Authorization', 'Bearer test-token')
+      .send({
+        imageUrl: 'not-a-valid-url',
+      })
+      .expect(400);
+
+    expect(response.body.success).toBe(false);
+    expect(response.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
+  });
+
+  it('PATCH /users/me requires authentication', async () => {
+    authenticateAs(null);
+
+    const response = await request(app)
+      .patch('/api/v1/users/me')
+      .send({
+        displayName: 'Updated Name',
+      })
+      .expect(401);
+
+    expect(response.body).toEqual({
+      success: false,
+      error: {
+        code: ErrorCode.UNAUTHENTICATED,
+        message: 'Authentication required',
       },
     });
   });

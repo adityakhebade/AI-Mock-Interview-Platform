@@ -4,6 +4,7 @@ import type { User } from '@prisma/client';
 const mockFindByClerkId = jest.fn<() => Promise<User | null>>();
 const mockUpsertFromClerkProfile = jest.fn<() => Promise<User>>();
 const mockFindById = jest.fn<() => Promise<User | null>>();
+const mockUpdateProfile = jest.fn<() => Promise<User>>();
 const mockFetchClerkUserProfile = jest.fn();
 
 jest.unstable_mockModule('../../src/repositories/user.repository.js', () => ({
@@ -11,6 +12,7 @@ jest.unstable_mockModule('../../src/repositories/user.repository.js', () => ({
     findByClerkId: mockFindByClerkId,
     upsertFromClerkProfile: mockUpsertFromClerkProfile,
     findById: mockFindById,
+    updateProfile: mockUpdateProfile,
   },
 }));
 
@@ -169,5 +171,65 @@ describe('userService', () => {
     await expect(userService.getCurrentUser('missing-user')).rejects.toBeInstanceOf(
       AppError
     );
+  });
+
+  it('updates user profile with display name and image URL', async () => {
+    mockFindById.mockResolvedValue(baseUser);
+    mockUpdateProfile.mockResolvedValue({
+      ...baseUser,
+      displayName: 'New Name',
+      imageUrl: 'https://new-image.com/avatar.jpg',
+      updatedAt: new Date('2026-07-21T12:00:00.000Z'),
+    });
+
+    const result = await userService.updateProfile('user_internal_1', {
+      displayName: 'New Name',
+      imageUrl: 'https://new-image.com/avatar.jpg',
+    });
+
+    expect(mockUpdateProfile).toHaveBeenCalledWith('user_internal_1', {
+      displayName: 'New Name',
+      imageUrl: 'https://new-image.com/avatar.jpg',
+    });
+    expect(result.displayName).toBe('New Name');
+    expect(result.imageUrl).toBe('https://new-image.com/avatar.jpg');
+  });
+
+  it('updates only display name when imageUrl is not provided', async () => {
+    mockFindById.mockResolvedValue(baseUser);
+    mockUpdateProfile.mockResolvedValue({
+      ...baseUser,
+      displayName: 'Updated Name Only',
+      updatedAt: new Date('2026-07-21T12:00:00.000Z'),
+    });
+
+    const result = await userService.updateProfile('user_internal_1', {
+      displayName: 'Updated Name Only',
+    });
+
+    expect(mockUpdateProfile).toHaveBeenCalledWith('user_internal_1', {
+      displayName: 'Updated Name Only',
+    });
+    expect(result.displayName).toBe('Updated Name Only');
+  });
+
+  it('throws NOT_FOUND when updating non-existent user', async () => {
+    mockFindById.mockResolvedValue(null);
+
+    await expect(
+      userService.updateProfile('non-existent', { displayName: 'Test' })
+    ).rejects.toMatchObject({
+      statusCode: 404,
+      code: ErrorCode.NOT_FOUND,
+    });
+  });
+
+  it('returns unchanged profile when no update data provided', async () => {
+    mockFindById.mockResolvedValue(baseUser);
+
+    const result = await userService.updateProfile('user_internal_1', {});
+
+    expect(mockUpdateProfile).not.toHaveBeenCalled();
+    expect(result.displayName).toBe(baseUser.displayName);
   });
 });

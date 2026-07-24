@@ -85,6 +85,31 @@ export const userService = {
     const currentUser = await userService.syncFromClerk(clerkId);
     return userService.getCurrentUser(currentUser.id);
   },
+
+  updateProfile: async (
+    userId: string,
+    data: { displayName?: string; imageUrl?: string }
+  ): Promise<PublicUserDto> => {
+    const user = await userRepository.findById(userId);
+
+    if (!user) {
+      throw new AppError('User not found', 404, ErrorCode.NOT_FOUND);
+    }
+
+    // Filter out undefined values
+    const updateData: { displayName?: string; imageUrl?: string } = {};
+    if (data.displayName !== undefined)
+      updateData.displayName = data.displayName;
+    if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
+
+    // Only update if there's data to update
+    if (Object.keys(updateData).length === 0) {
+      return toPublicUserDto(user);
+    }
+
+    const updatedUser = await userRepository.updateProfile(userId, updateData);
+    return toPublicUserDto(updatedUser);
+  },
 };
 
 export { toPublicUserDto };
