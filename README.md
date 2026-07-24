@@ -1,373 +1,156 @@
-# 🚀 IntervueX
+# IntervueX
 
-> AI-Powered Technical Interview Platform for Software Engineers
+AI-Powered Mock Interview Platform
 
-IntervueX is a full-stack AI-powered technical interview platform that simulates real software engineering interviews. It provides candidates with an interactive interview experience featuring real-time video conferencing, collaborative coding, AI-based evaluation, interview analytics, resume analysis, and detailed performance reports.
+## Description
 
-The platform is designed with a scalable layered architecture, enabling modular development, maintainability, and future AI integrations.
+IntervueX is a modern interview preparation platform that helps candidates practice coding and behavioral interviews with AI-powered feedback.
 
----
+## Tech Stack
 
-## 📸 Screenshots
+### Frontend
+- **Framework**: Next.js 15
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Authentication**: Clerk
 
-> Add screenshots here
+### Backend
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Language**: JavaScript (ES Modules)
+- **Database**: PostgreSQL (Neon)
+- **ORM**: Prisma
+- **Authentication**: Clerk
 
-| Home | Dashboard |
-|------|-----------|
-| ![](docs/home.png) | ![](docs/dashboard.png) |
-
----
-
-# ✨ Features
-
-### 👤 Authentication
-
-- Secure authentication
-- Session management
-- Protected routes
-- User profile management
-
----
-
-### 🎥 AI Interview Room
-
-- Real-time video interview
-- Microphone & camera controls
-- Screen sharing support
-- Interview timer
-- Live interview status
-- Collaborative interview session
-
----
-
-### 💻 Collaborative Code Editor
-
-- Monaco Editor
-- Multi-language support
-- Syntax highlighting
-- Real-time collaboration
-- Code execution support (planned)
-- Auto-save functionality
-
----
-
-### 🤖 AI Interviewer
-
-- AI-generated interview questions
-- Adaptive questioning
-- Follow-up questions
-- Behavioral interview support
-- Technical interview support
-- AI feedback generation
-
----
-
-### 📊 Dashboard
-
-- Interview history
-- Upcoming interviews
-- Performance analytics
-- Skill progress tracking
-- Statistics overview
-
----
-
-### 📄 Resume Analysis
-
-- Resume upload
-- ATS score analysis
-- Resume improvement suggestions
-- Skill extraction
-- Keyword analysis
-
----
-
-### 📈 Reports & Analytics
-
-- Coding performance
-- Communication analysis
-- Confidence score
-- Technical score
-- Overall interview score
-- Detailed AI feedback
-
----
-
-### ⚙️ Settings
-
-- Profile management
-- Theme support
-- Notification preferences
-- Account settings
-
----
-
-# 🏗️ Architecture
+## Project Structure
 
 ```
-                    Next.js Frontend
-                           │
-                   REST API (Express)
-                           │
-                  Service Layer
-                           │
-                 Business Logic Layer
-                           │
-                 Prisma ORM
-                           │
-                     PostgreSQL
-```
-
----
-
-# 🛠 Tech Stack
-
-## Frontend
-
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-- shadcn/ui
-- Framer Motion
-- React Hook Form
-- Zod
-- Clerk Authentication
-
----
-
-## Backend
-
-- Node.js
-- Express.js
-- TypeScript
-- Prisma ORM
-- PostgreSQL
-- JWT
-- Socket.io
-
----
-
-## AI
-
-- Google Gemini API
-- AI Interview Evaluation
-- Resume Analysis
-- Interview Feedback
-
----
-
-## Real-Time
-
-- Socket.io
-- Live Code Collaboration
-- Video Session Synchronization
-
----
-
-## Database
-
-- PostgreSQL
-- Prisma ORM
-
----
-
-## Deployment
-
-- Vercel (Frontend)
-- Render / Railway (Backend)
-- Neon PostgreSQL
-
----
-
-# 📂 Project Structure
-
-```
-IntervueX/
-
-├── frontend/
-│   ├── app/
-│   ├── components/
-│   ├── hooks/
-│   ├── lib/
-│   ├── services/
-│   └── types/
+intervuex/
+├── frontend/         # Next.js Frontend Application
+│   ├── app/          # Next.js app directory
+│   ├── components/   # React components
+│   ├── lib/          # Utility functions
+│   ├── public/       # Static assets
+│   └── package.json
 │
-├── backend/
-│   ├── src/
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── routes/
-│   │   ├── middleware/
-│   │   ├── prisma/
-│   │   ├── sockets/
-│   │   └── utils/
-│   │
-│   └── prisma/
+├── backend/          # Express.js Backend API
+│   ├── src/          # Source code
+│   │   ├── config/   # Configuration
+│   │   ├── routes/   # API routes
+│   │   ├── middleware/ # Middleware
+│   │   └── ...
+│   ├── prisma/       # Database schema
+│   └── package.json
 │
-└── docs/
+├── context/          # Documentation
+└── README.md
 ```
 
----
+## Getting Started
 
-# 🚀 Getting Started
+### Prerequisites
 
-## Clone Repository
+- Node.js 18+
+- PostgreSQL (or Neon account)
+- Clerk Account
+
+### Installation
+
+1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/intervuex.git
-```
-
-```bash
+git clone https://github.com/adityakhebade/AI-Mock-Interview-Platform.git
 cd intervuex
 ```
 
----
-
-## Frontend
+2. **Setup Frontend**
 
 ```bash
 cd frontend
 npm install
-npm run dev
 ```
 
----
+Create `frontend/.env.local`:
 
-## Backend
+```env
+# Clerk
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+```
+
+3. **Setup Backend**
 
 ```bash
-cd backend
+cd ../backend
 npm install
 ```
 
-Generate Prisma Client
+Create `backend/.env`:
 
-```bash
-npx prisma generate
+```env
+# Server
+PORT=5000
+NODE_ENV=development
+
+# Database
+DATABASE_URL=your_postgresql_connection_string
+
+# Frontend
+FRONTEND_URL=http://localhost:3000
 ```
 
-Run migrations
+### Running the Application
 
+**Terminal 1 - Backend:**
 ```bash
-npx prisma migrate dev
-```
-
-Start server
-
-```bash
+cd backend
 npm run dev
 ```
+Backend runs at http://localhost:5000
 
----
-
-# 🔑 Environment Variables
-
-### Frontend
-
-```env
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-
-CLERK_SECRET_KEY=
-
-NEXT_PUBLIC_API_URL=
-
-NEXT_PUBLIC_SOCKET_URL=
-
-NEXT_PUBLIC_GEMINI_API_KEY=
-```
-
----
-
-### Backend
-
-```env
-DATABASE_URL=
-
-JWT_SECRET=
-
-PORT=
-
-GEMINI_API_KEY=
-
-FRONTEND_URL=
-```
-
----
-
-# 📌 Future Enhancements
-
-- AI Voice Interviewer
-- Live Whiteboard
-- Screen Recording
-- Interview Scheduling
-- Company-specific Interview Modes
-- Coding Question Library
-- Contest Mode
-- Team Interviews
-- AI Cheat Detection
-- Recruiter Dashboard
-- Leaderboard
-- Mock Interview Marketplace
-
----
-
-# 📊 Roadmap
-
-- [x] Frontend UI
-- [x] Authentication
-- [x] Dashboard
-- [x] Interview Configuration
-- [ ] Backend APIs
-- [ ] Database Integration
-- [ ] Real-Time Interview Room
-- [ ] AI Interview Evaluation
-- [ ] Resume Analyzer
-- [ ] Reports & Analytics
-- [ ] Deployment
-
----
-
-# 🤝 Contributing
-
-Contributions are welcome!
-
-1. Fork the repository
-2. Create a feature branch
-
+**Terminal 2 - Frontend:**
 ```bash
-git checkout -b feature/new-feature
+cd frontend
+npm run dev
 ```
+Frontend runs at http://localhost:3000
 
-3. Commit changes
+## Features
 
-```bash
-git commit -m "Add new feature"
-```
+- 🎯 AI-powered interview practice
+- 💼 Coding and behavioral questions
+- 📊 Performance analytics
+- 📝 Resume analysis
+- 🔐 Secure authentication with Clerk
+- 🗄️ PostgreSQL database with Prisma ORM
 
-4. Push
+## API Endpoints
 
-```bash
-git push origin feature/new-feature
-```
+- `GET /` - Welcome message
+- `GET /health` - Health check
+- More endpoints coming soon...
 
-5. Open a Pull Request
+## Development
 
----
+### Frontend Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
 
-# 📄 License
+### Backend Scripts
+- `npm run dev` - Start development server with nodemon
+- `npm start` - Start production server
+- `npm run prisma:generate` - Generate Prisma Client
+- `npm run prisma:migrate` - Run migrations
+- `npm run prisma:studio` - Open Prisma Studio
 
-This project is licensed under the MIT License.
+## Contributing
 
----
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-# 👨‍💻 Author
+## License
 
-**Aditya Khebade**
-
-- GitHub: https://github.com/yourusername
-- LinkedIn: https://linkedin.com/in/yourprofile
-
----
-
-⭐ If you like this project, consider giving it a Star.
+MIT
