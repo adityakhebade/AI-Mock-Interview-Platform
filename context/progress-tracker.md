@@ -4,14 +4,14 @@ Update this file after every meaningful implementation change.
 
 ## Current Phase
 
-- Backend Development — Database Connected and User Sync Ready for Testing
+- Backend Development — User Module Complete with Profile Updates
 
 ## Current Goal
 
-- PostgreSQL (Neon) connected and migrated successfully
-- Clerk authentication configured with valid keys
-- Backend ready for end-to-end testing with frontend
-- Ready to implement interview module
+- User authentication working with Clerk
+- User profile management complete (read and update)
+- Database connected and operational
+- Ready to implement Interview Module
 
 ## Completed
 
@@ -152,6 +152,7 @@ Implemented Feature Spec `context/feature-specs/05-user-sync.md`.
 - **Installed Dependencies**:
   - `@clerk/express` for Clerk session verification
   - `jest`, `ts-jest`, `supertest` for unit and integration testing
+  - `zod` for validation schemas
 
 - **Clerk Configuration** (`server/src/config/index.ts`, `server/.env`):
   - ✓ Configured `CLERK_SECRET_KEY` from frontend Clerk application
@@ -169,18 +170,22 @@ Implemented Feature Spec `context/feature-specs/05-user-sync.md`.
 
 - **User Layer**:
   - `server/src/integrations/clerk/clerk.client.ts` — Clerk profile adapter
-  - `server/src/repositories/user.repository.ts` — Prisma-only persistence (`findByClerkId`, `upsertFromClerkProfile`)
-  - `server/src/services/user.service.ts` — sync and public DTO logic
+  - `server/src/repositories/user.repository.ts` — Prisma-only persistence (`findByClerkId`, `upsertFromClerkProfile`, `findById`, `updateProfile`)
+  - `server/src/services/user.service.ts` — sync, public DTO logic, and profile updates
   - `server/src/controllers/user.controller.ts` — HTTP handlers
   - `server/src/routes/user.routes.ts` — protected user routes
+  - `server/src/validations/user.validation.ts` — Zod validation schemas
+  - `server/src/middleware/validate.ts` — Generic validation middleware
 
 - **API Endpoints**:
   - `POST /api/v1/users/sync` — idempotent local user sync from verified Clerk token
   - `GET /api/v1/users/me` — returns authenticated local user profile (syncs if missing)
+  - `PATCH /api/v1/users/me` — update user profile (displayName, imageUrl) with validation
 
 - **Error Handling**:
-  - Extended `AppError` with machine-readable codes (`UNAUTHENTICATED`, `USER_PROFILE_INCOMPLETE`, etc.)
+  - Extended `AppError` with machine-readable codes (`UNAUTHENTICATED`, `USER_PROFILE_INCOMPLETE`, `VALIDATION_ERROR`, etc.)
   - Standard error envelope: `{ success: false, error: { code, message } }`
+  - Validation errors include field-level details
 
 - **Frontend API Client** (`lib/api/client.ts`):
   - Attaches Clerk session token via `Authorization: Bearer <token>`
@@ -188,9 +193,10 @@ Implemented Feature Spec `context/feature-specs/05-user-sync.md`.
   - Does not change Clerk sign-in/sign-up UI or Next.js route protection
 
 - **Tests** (`server/tests/`):
-  - Unit tests: user creation, idempotent sync, profile mapping, incomplete profile rejection, public DTO safety
-  - Integration tests: sync/me endpoints, 401 handling, public health access, `req.currentUser` context
+  - Unit tests: user creation, idempotent sync, profile mapping, incomplete profile rejection, public DTO safety, profile updates
+  - Integration tests: sync/me/patch endpoints, 401 handling, public health access, `req.currentUser` context, validation errors
   - All tests use mocked Clerk calls and repository layer (no live Clerk or production DB)
+  - ✅ **20 tests passing** (10 unit + 10 integration)
 
 - **Environment Configuration Complete** (2026-07-21):
   - ✓ All Clerk keys added to `server/.env`
@@ -201,11 +207,12 @@ Implemented Feature Spec `context/feature-specs/05-user-sync.md`.
 - **Verification Results**:
   - ✓ TypeScript compilation: PASS
   - ✓ ESLint: PASS
-  - ✓ Jest: 12 tests passed (2 suites)
+  - ✓ Jest: 20 tests passed (2 suites)
   - ✓ Server starts successfully with Clerk middleware
   - ✓ Health endpoint accessible at http://localhost:5000/api/v1/health
-  - ✓ User sync endpoints ready for testing with real Clerk tokens
+  - ✓ User sync and update endpoints ready for testing with real Clerk tokens
   - ✓ Layered architecture preserved
+  - ✓ Validation working with Zod schemas
   - ✓ No Clerk webhooks, interview/resume/report routes, or auth UI changes
 
 ## In Progress
