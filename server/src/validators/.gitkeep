@@ -1,9 +1,0 @@
-# Validators Directory
-
-Zod validation schemas will be placed here.
-
-Example:
-- user.validator.ts
-- interview.validator.ts
-- resume.validator.ts
-- auth.validator.ts

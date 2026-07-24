@@ -1,325 +1,247 @@
-# IntervueX Backend Foundation
+# 01-backend-setup.md
 
-**Status:** Approved foundation guide  
-**Audience:** Contributors and AI coding agents  
-**Scope:** Backend service setup only; no product modules or database models are implemented by this document.
+# IntervueX Backend Setup
 
-## 1. Purpose
+## Goal
 
-This document defines the foundation for the IntervueX backend: a standalone TypeScript and Express REST API that will persist application data, enforce server-side authorization, and provide a stable contract for the Next.js frontend.
+Set up the backend foundation for IntervueX using **Node.js, Express.js, JavaScript (ES Modules), Prisma, and PostgreSQL**.
 
-Clerk remains the source of truth for authentication identities. The backend owns IntervueX application data such as interviews, questions, submissions, evaluations, reports, and resumes. PostgreSQL is accessed only through Prisma.
+This step creates only the backend infrastructure. Do **not** implement authentication or any business modules.
 
-The foundation must make future feature work predictable: each request follows the same route → controller → service → repository → Prisma flow, and cross-cutting behavior such as validation, logging, errors, and security is configured once.
+---
 
-## 2. Goals
+# Tech Stack
 
-- Create an independently runnable Express + TypeScript backend service.
-- Establish a clean, modular folder structure before product features are added.
-- Provide safe configuration loading and fail fast when required environment values are missing.
-- Standardize middleware, errors, API responses, logging, linting, formatting, and scripts.
-- Prepare the service for PostgreSQL, Prisma, Clerk verification, and later Socket.IO without implementing those feature modules yet.
-- Preserve a clear boundary: frontend UI never accesses Prisma or the database directly.
+- Node.js
+- Express.js
+- JavaScript (ES Modules)
+- PostgreSQL
+- Prisma ORM
+- dotenv
+- cors
+- helmet
+- morgan
+- compression
 
-## 3. Responsibilities and Boundaries
+---
 
-### In scope
+# Folder Structure
 
-- HTTP server bootstrapping and health endpoint.
-- Application middleware and global error handling.
-- Environment configuration and typed configuration access.
-- Shared response, error, and utility infrastructure.
-- Development, build, lint, format, test, and Prisma scripts.
-- Empty module directories with ownership rules.
-
-### Explicitly out of scope
-
-- Prisma models, migrations, or database business queries.
-- Clerk user synchronization and protected feature endpoints.
-- Interview, question, resume, evaluation, report, dashboard, or AI functionality.
-- File uploads, external AI calls, email, queues, Socket.IO events, video, or code execution.
-- Frontend changes beyond adding the backend base URL to its environment configuration when needed.
-
-Do not add placeholder product routes, mock data, or speculative tables in this phase.
-
-## 4. Technology Stack
-
-| Technology | Role | Rationale |
-| --- | --- | --- |
-| Node.js (active LTS) | Runtime | Stable, well-supported runtime for the TypeScript service. |
-| TypeScript | Language | Catches API and data-contract mistakes before runtime. |
-| Express | HTTP framework | Lightweight, familiar, and suitable for an incremental REST API. |
-| PostgreSQL | Primary database | Reliable relational storage for users, interviews, and reports. |
-| Prisma | ORM and migrations | Type-safe database access and maintainable schema migrations. |
-| Clerk | Identity provider | The existing frontend authentication provider; backend verifies Clerk-issued tokens. |
-| Zod | Runtime validation | Validates environment values and later request DTOs with clear errors. |
-| Pino + pino-http | Logging | Structured, machine-readable logs with low overhead. |
-| Helmet | HTTP security headers | Establishes a secure default header baseline. |
-| CORS | Browser-origin policy | Allows only configured frontend origins to access the API. |
-| compression | Response compression | Reduces transfer size for suitable API responses. |
-| Vitest + Supertest | Testing | Fast TypeScript-compatible unit and HTTP integration tests. |
-| ESLint + Prettier | Code quality | Enforces consistent code and catches common mistakes. |
-
-`morgan` is not required when Pino HTTP logging is used. Use one request logger, not both.
-
-## 5. Service Layout
-
-Create the backend as a separate service at `backend/`. The exact project may call this directory `server/`; choose one name once and use it consistently. This document uses `backend/`.
-
-```text
 backend/
+│
 ├── prisma/
-│   ├── schema.prisma              # Added in the Prisma phase
-│   ├── migrations/                # Generated migrations; never hand-edit applied migrations
-│   └── seed.ts                    # Seed entry point only when seeds are approved
+│   └── schema.prisma
+│
 ├── src/
 │   ├── config/
-│   │   ├── env.ts                 # Zod-validated environment configuration
-│   │   └── logger.ts              # Pino logger setup
-│   ├── constants/                 # Shared constants with no business logic
-│   ├── controllers/               # Translate HTTP requests/responses; no Prisma calls
-│   ├── errors/                    # AppError and error classification helpers
-│   ├── middleware/                # Auth, validation, 404, error, and request middleware
-│   ├── repositories/              # The only layer that will access Prisma
-│   ├── routes/                    # Route registration and endpoint-to-controller mapping
-│   ├── services/                  # Business rules and transaction orchestration
-│   ├── types/                     # Shared TypeScript types and Express augmentation
-│   ├── utils/                     # Stateless, framework-neutral helpers
-│   ├── validators/                # Zod request schemas and DTO definitions
-│   ├── prisma/                    # Prisma client singleton, added in Prisma phase
-│   ├── app.ts                     # Creates and configures the Express application
-│   └── server.ts                  # Starts HTTP server and handles graceful shutdown
-├── tests/
-│   ├── unit/
-│   ├── integration/
-│   └── helpers/
-├── .env.example                   # Safe, documented environment variable template
+│   │   ├── db.js
+│   │   └── env.js
+│   │
+│   ├── controllers/
+│   ├── middleware/
+│   ├── repositories/
+│   ├── routes/
+│   ├── services/
+│   ├── validations/
+│   ├── utils/
+│   │
+│   ├── app.js
+│   └── server.js
+│
+├── .env
+├── .env.example
 ├── .gitignore
-├── eslint.config.*
-├── prettier.config.*
 ├── package.json
-└── tsconfig.json
-```
+└── README.md
 
-### Layer ownership rules
+---
 
-| Layer | Owns | Must not do |
-| --- | --- | --- |
-| Routes | URL, HTTP method, middleware order | Business rules or database access |
-| Controllers | Request extraction and response selection | Prisma calls or complex business logic |
-| Services | Business rules, ownership checks, transactions | Express `Request`/`Response` usage |
-| Repositories | Prisma queries and persistence mapping | HTTP concerns or policy decisions |
-| Validators | Parsing and validation of untrusted input | Database queries |
-| Middleware | Cross-cutting HTTP concerns | Feature-specific business logic |
+# Install Packages
 
-Dependencies flow inward: `routes → controllers → services → repositories → Prisma`. Reverse imports are prohibited.
+## Runtime
 
-## 6. Environment Configuration
+express
 
-Keep secrets in `backend/.env`, never in source control. Commit `backend/.env.example` with blank values and comments only. Validate configuration once at startup using Zod; application code imports the typed config object rather than reading `process.env` directly.
+cors
 
-```dotenv
-# Runtime
+helmet
+
+compression
+
+dotenv
+
+morgan
+
+zod
+
+@prisma/client
+
+## Development
+
+prisma
+
+nodemon
+
+---
+
+# Package.json Scripts
+
+"dev"
+
+Start development server using nodemon.
+
+"start"
+
+Start production server.
+
+"prisma:generate"
+
+Generate Prisma client.
+
+"prisma:migrate"
+
+Run Prisma migrations.
+
+"prisma:studio"
+
+Open Prisma Studio.
+
+---
+
+# Environment Variables
+
+PORT=5000
+
 NODE_ENV=development
-PORT=4000
-LOG_LEVEL=info
 
-# Browser access
+DATABASE_URL=
+
 FRONTEND_URL=http://localhost:3000
 
-# Database (introduced in the Prisma phase)
-DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/intervuex?schema=public
+---
 
-# Clerk (introduced in the authentication phase)
-CLERK_SECRET_KEY=
-CLERK_PUBLISHABLE_KEY=
+# Express Middleware Order
 
-# Optional, added only with the corresponding feature
-# GEMINI_API_KEY=
-# STORAGE_*=
-```
+Helmet
 
-Required now: `NODE_ENV`, `PORT`, `LOG_LEVEL`, and `FRONTEND_URL`. `DATABASE_URL` becomes required when Prisma is configured. Clerk keys become required only when backend authentication middleware is introduced. Do not introduce a separate JWT secret: Clerk is the authentication authority for this MVP.
+↓
 
-## 7. Package Selection
+CORS
 
-Install only the packages needed for the foundation.
+↓
 
-```text
-Runtime:     express, cors, helmet, compression, dotenv, zod, pino, pino-http
-Development: typescript, tsx, @types/node, @types/express, @types/cors,
-             @types/compression, eslint, prettier, vitest, supertest,
-             @types/supertest
-Later:       prisma, @prisma/client, @clerk/express (or the current official Clerk server SDK)
-```
+Compression
 
-Before adding Clerk or Prisma packages, confirm their current official setup in their primary documentation and record the chosen versions in the relevant setup document. Do not add `jsonwebtoken`, `passport`, ORM alternatives, or a dependency-injection framework without an approved architecture decision.
+↓
 
-## 8. NPM Scripts
+Morgan Logger
 
-The backend `package.json` must provide these scripts. Adjust command syntax only where the project tooling requires it.
+↓
 
-```json
+JSON Parser
+
+↓
+
+Routes
+
+↓
+
+404 Handler
+
+↓
+
+Global Error Handler
+
+---
+
+# Routes
+
+Create only:
+
+GET /
+
+Returns:
+
 {
-  "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc -p tsconfig.json",
-    "start": "node dist/server.js",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
-  }
+  "success": true,
+  "message": "IntervueX Backend Running"
 }
-```
 
-Prisma scripts may exist before Prisma is installed, but must not be run until the Prisma setup phase is complete.
+---
 
-## 9. Request Lifecycle and Middleware Order
+GET /health
 
-```text
-Client
-  → request ID and structured request log
-  → Helmet
-  → configured CORS
-  → compression
-  → express.json / URL-encoded parser with size limits
-  → public health route
-  → API router (/api/v1)
-      → authentication middleware (protected routes only)
-      → request validation
-      → controller
-      → service
-      → repository
-      → Prisma / PostgreSQL
-  → not-found middleware
-  → central error handler
-  → consistent JSON response and completion log
-```
+Returns:
 
-Register the error handler last. The health endpoint must be public and return a minimal response such as `{ "success": true, "data": { "status": "ok" } }`. API feature routes will be introduced under `/api/v1` to permit future non-breaking versioning.
+{
+  "success": true,
+  "status": "Healthy"
+}
 
-## 10. Coding and API Conventions
+---
 
-- Use strict TypeScript. Do not use `any`; prefer `unknown` plus narrowing.
-- Use `camelCase` for variables/functions, `PascalCase` for types/classes, and `kebab-case` for file names.
-- Name files by responsibility: `interview.controller.ts`, `interview.service.ts`, `interview.repository.ts`, `interview.validator.ts`.
-- Use async/await. Do not leave rejected promises unhandled.
-- Use `AppError` subclasses or typed error codes for expected failures. Never expose stack traces or internal error details to clients.
-- Validate path parameters, query parameters, and request bodies at the API boundary with Zod.
-- Return a consistent envelope, for example:
+# Coding Rules
 
-```json
-{ "success": true, "data": {}, "meta": {} }
-```
+- Use JavaScript ES Modules.
+- Use async/await.
+- No callbacks.
+- No TypeScript.
+- No authentication.
+- No Prisma models.
+- No business logic.
+- Keep project modular.
 
-```json
-{ "success": false, "error": { "code": "VALIDATION_ERROR", "message": "Invalid request", "details": [] } }
-```
+---
 
-- Keep controllers thin and repositories deterministic. Services enforce ownership and business state transitions.
-- Do not return raw Prisma records when a dedicated response DTO is needed; map fields explicitly in the service or response mapper.
+# Deliverables
 
-## 11. Configuration, Logging, and Security Baseline
+✅ Backend folder created
 
-### Configuration strategy
+✅ Express server configured
 
-`config/env.ts` is the only module permitted to parse environment values. It validates, coerces, and exports an immutable typed configuration object. Test configuration separately; tests must not depend on a developer's local `.env` file.
+✅ Environment configuration
 
-### Logging overview
+✅ Middleware configured
 
-Use Pino structured logs. Each request receives or accepts a request ID, which appears in request, error, and service logs. Log method, route, status, duration, and request ID. Never log passwords, Clerk tokens, authorization headers, database URLs, raw resumes, code submissions, or AI prompts/responses containing candidate data.
+✅ Health endpoint
 
-### Security baseline
+✅ Base route
 
-- Enable Helmet with reviewed defaults.
-- Restrict CORS to `FRONTEND_URL`; do not use `*` with credentials.
-- Set JSON/body size limits before routes.
-- Trust reverse proxies only when deployment configuration requires it.
-- Store secrets outside Git; rotate exposed credentials immediately.
-- Verify Clerk tokens server-side before any protected-route data access.
-- Enforce ownership in services even when a route is authenticated.
-- Add rate limiting when public/auth-sensitive endpoints are introduced; document the policy then.
+✅ Prisma initialized
 
-## 12. Development Workflow
+---
 
-For every implementation unit:
+# AI Execution Prompt
 
-1. Read `CLAUDE.md` and all relevant documents in `docs/context/`, then this document.
-2. Read the matching document in `docs/backend/` and implementation spec in `docs/specs/` when available.
-3. Inspect the current codebase and preserve unrelated work.
-4. Implement only the approved scope; do not add adjacent features.
-5. Run the relevant verification commands: format check, lint, typecheck, tests, and startup/health check.
-6. Update the progress tracker with completed work, verification performed, and any decision or blocker.
-7. Commit a small, coherent change and open a focused pull request.
+Implement the backend foundation.
 
-If a context file conflicts with an approved backend design document, stop and document the discrepancy rather than silently choosing one.
+Requirements:
 
-## 13. AI Implementation Prompt
+- Use JavaScript (ES Modules), not TypeScript.
+- Create the folder structure exactly as defined.
+- Configure Express.
+- Configure middleware.
+- Initialize Prisma.
+- Configure environment variables.
+- Create "/" and "/health" routes.
+- Use clean code and modular architecture.
+- Do not implement authentication or database models.
+- Ensure the server starts successfully with `npm run dev`.
 
-```text
-You are implementing the IntervueX backend foundation.
+---
 
-First read CLAUDE.md, all relevant docs/context/*.md files, the project progress tracker,
-and docs/backend/01-backend-setup.md. Treat the backend setup document as the
-implementation contract.
+# Success Criteria
 
-Create the backend/ TypeScript + Express foundation exactly as documented: project
-structure, strict TypeScript configuration, typed Zod-validated environment config,
-Pino request logging, Helmet, restricted CORS, compression, JSON body limits, a public
-health endpoint, not-found middleware, central error handling, linting/formatting,
-testing scaffolding, and npm scripts.
+✓ Server starts without errors
 
-Do not implement Prisma models, database access, Clerk synchronization, feature routes,
-mock data, AI integrations, Socket.IO, uploads, or frontend changes beyond essential
-configuration documentation. Controllers must not access Prisma; future layering must
-remain route → controller → service → repository → Prisma.
+✓ GET / works
 
-Run format checking, linting, type checking, tests, and a local health-endpoint check.
-Report every changed file, command result, and assumption. Update the progress tracker
-only after verification. Stop when the foundation is complete.
-```
+✓ GET /health works
 
-## 14. Verification Checklist
+✓ Middleware configured
 
-- [ ] `backend/` follows the documented structure.
-- [ ] `npm run dev` starts the service and `GET /health` returns HTTP 200.
-- [ ] Invalid or missing required environment variables stop startup with actionable messages.
-- [ ] CORS accepts only the configured frontend origin.
-- [ ] Helmet, compression, parsers, request logging, 404, and error middleware run in the documented order.
-- [ ] Unexpected errors return the standard error envelope without a stack trace.
-- [ ] `npm run format:check`, `npm run lint`, `npm run typecheck`, and `npm test` pass.
-- [ ] `.env` is ignored and `.env.example` contains no real secret.
-- [ ] No product module, mock data, Prisma schema/model, or database query has been added.
-- [ ] The progress tracker records the implementation and verification results.
+✓ Prisma initialized
 
-## 15. Recommended Git Metadata
+✓ Folder structure matches specification
 
-| Item | Recommendation |
-| --- | --- |
-| Branch | `feat/backend-foundation` |
-| Commit | `feat(backend): establish Express service foundation` |
-| Pull request title | `feat(backend): establish Express service foundation` |
-| PR description | Summarize configuration, middleware, tooling, verification output, and explicitly note that no business modules were introduced. |
-
-## 16. Related Context and Next Document
-
-Read and keep this document aligned with the existing project context documents, especially:
-
-- `CLAUDE.md` — AI-agent entry point and repository-specific instructions.
-- `docs/context/project-overview.md` — product scope and MVP boundaries.
-- `docs/context/architecture.md` — existing frontend and layered-architecture decisions.
-- `docs/context/coding-standards.md` — naming, quality, and API conventions.
-- `docs/context/ai-workflow-rules.md` — incremental AI development rules.
-- `docs/context/progress-tracker.md` — current work state and completed decisions.
-- `README.md` — public project summary and developer onboarding.
-
-If a listed file is not present in the current checkout, do not invent its content; use the available context and record the missing reference in the progress tracker.
-
-After this foundation is implemented and verified, create and approve `docs/backend/02-backend-architecture.md`. That document will define module boundaries, DTOs, transaction rules, repository patterns, and the precise dependency rules used by feature modules.
+✓ Ready for Authentication Module

@@ -1,7 +1,0 @@
-# Sockets Directory
-
-WebSocket and Socket.io related files will be placed here for real-time features.
-
-Example:
-- socket.config.ts
-- socket.handlers.ts
