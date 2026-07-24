@@ -1,9 +1,0 @@
-# Repositories Directory
-
-Database access layer files will be placed here.
-
-Example:
-- user.repository.ts
-- interview.repository.ts
-- resume.repository.ts
-- report.repository.ts
