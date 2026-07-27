@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import config from './config/env.js';
 import routes from './routes/index.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
+import { initClerkMiddleware } from './middleware/auth.middleware.js';
 
 const app = express();
 
@@ -27,6 +28,9 @@ app.use(morgan(config.nodeEnv === 'development' ? 'dev' : 'combined'));
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Clerk authentication middleware (global)
+app.use(initClerkMiddleware);
 
 // Routes
 app.use('/', routes);

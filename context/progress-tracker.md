@@ -4,220 +4,149 @@ Update this file after every meaningful implementation change.
 
 ## Current Phase
 
-- Backend Development — User Module Complete with Profile Updates
+- Backend Development — Question Module Complete
 
 ## Current Goal
 
 - User authentication working with Clerk
 - User profile management complete (read and update)
+- Resume management complete (Cloudinary integration)
+- Interview management complete (CRUD and status transitions)
+- Question management complete (CRUD, bulk insert, ordering)
 - Database connected and operational
-- Ready to implement Interview Module
+- Ready to implement Submission Module
 
 ## Completed
 
 ### Frontend Foundation
 
-- Installed shadcn/ui runtime dependencies and `lucide-react`.
-- Added `components.json` and `lib/utils.ts` with `cn()`.
-- Configured Tailwind theme tokens for light and dark modes.
-- Added reusable UI primitives under `components/ui/`.
-- Wired theme management into the app shell.
-- Refreshed the public landing page and implemented the final visual system.
-- Added Reports, Resumes, and Settings pages.
-- Fixed Tailwind v4 CSS compatibility issues in `app/globals.css`.
-- Removed all mock/demo frontend data and replaced it with production empty states.
-- Connected displayed user name, email, and avatar state to Clerk `useUser()`.
-- Protected workspace routes with Clerk middleware.
-- Replaced the PNG logo with a custom IntervueX SVG logo.
-- Fixed the nested anchor hydration error in `AppShell`.
-- Created and pushed the landing-page redesign branch and commits.
+- Installed shadcn/ui runtime dependencies and `lucide-react`
+- Added `components.json` and `lib/utils.ts` with `cn()`
+- Configured Tailwind theme tokens for light and dark modes
+- Added reusable UI primitives under `components/ui/`
+- Wired theme management into the app shell
+- Refreshed the public landing page and implemented the final visual system
+- Added Reports, Resumes, and Settings pages
+- Fixed Tailwind v4 CSS compatibility issues in `app/globals.css`
+- Removed all mock/demo frontend data and replaced it with production empty states
+- Connected displayed user name, email, and avatar state to Clerk `useUser()`
+- Protected workspace routes with Clerk middleware
+- Replaced the PNG logo with a custom IntervueX SVG logo
+- Fixed the nested anchor hydration error in `AppShell`
 
-### Backend Foundation
+### Backend Foundation (JavaScript - ES Modules)
 
-- Created a standalone Express.js + TypeScript backend in `server/`.
-- Configured strict TypeScript with an ES2022 target.
-- Added environment configuration through `server/.env.example`.
-- Configured ESLint and Prettier.
-- Added the initial clean backend structure:
+- **Deleted TypeScript backend** (`server/` folder) - Created backup branch `backup/typescript-backend`
+- **Created JavaScript backend** in `backend/` folder with Express.js and ES Modules
+- Configured environment variables in `backend/.env` and `.env.example`
+- Implemented layered architecture: **Routes → Controllers → Services → Repositories → Prisma → PostgreSQL**
+- Created utility functions:
+  - `asyncHandler.js` - Async error handling wrapper
+  - `AppError.js` - Custom error class with status codes
+  - `response.js` - Standardized API response helpers
+- Created error handling middleware with standard error envelope
+- Added security middleware: Helmet, CORS, rate limiting
+- Added HTTP request logging with Morgan
+- Implemented API versioning under `/api/v1/`
+- Added health endpoint: `GET /api/v1/health`
+- Server running successfully on port 5000
+- Created comprehensive documentation:
+  - `ARCHITECTURE.md` - Layered architecture and design patterns
+  - `README.md` files for each layer
 
-  ```text
-  server/
-  ├── src/
-  │   ├── config/
-  │   ├── controllers/
-  │   ├── middleware/
-  │   ├── repositories/
-  │   ├── routes/
-  │   ├── services/
-  │   ├── sockets/
-  │   ├── types/
-  │   ├── utils/
-  │   ├── validators/
-  │   ├── app.ts
-  │   └── server.ts
-  └── package.json
-  ```
+### Database and Prisma Setup (JavaScript)
 
-- Added centralized error handling with `AppError`.
-- Added a shared API response format.
-- Added security middleware: Helmet, CORS, compression, and cookie parsing.
-- Added HTTP request logging with Morgan.
-- Added graceful shutdown handling.
-- Added a health endpoint:
+- **Database Design Complete** (2026-07-25):
+  - Created comprehensive `DATABASE_DESIGN.md` (500+ lines)
+  - Defined 7 tables: Users, Resumes, Interviews, Questions, Submissions, Evaluations, Reports
+  - Defined 3 enums: InterviewStatus, Difficulty, QuestionType
+  - Documented all relationships, foreign keys, cascade rules
+  - Specified indexes for query optimization
 
-  ```text
-  GET /api/v1/health
-  ```
+- **Prisma Installation and Configuration**:
+  - Installed Prisma v5.x with `@prisma/client`
+  - Configured PostgreSQL provider (Neon cloud database)
+  - Created Prisma schema with all 7 models and 3 enums
+  - Created Prisma Client singleton (`src/config/prisma.js`)
+  - Environment: `DATABASE_URL` configured in `.env`
 
-- Verified backend dependency installation, TypeScript compilation, linting, formatting, server startup, and health endpoint response.
+- **Database Migration**:
+  - Applied migration `20260725175754_init_complete_schema`
+  - All tables created in Neon PostgreSQL
+  - All enums, indexes, foreign keys applied
+  - Database schema verified and in sync
 
-### Prisma and PostgreSQL Setup
+- **Verification**:
+  - ✅ Schema validation passes
+  - ✅ Prisma Client generated successfully
+  - ✅ Database connection working
+  - ✅ Server starts with Prisma configured
+  - ✅ Created `PRISMA_SETUP.md` documentation
 
-- **Installed Prisma Dependencies** (2026-07-20):
-  - `prisma` v7.9.0 (dev dependency)
-  - `@prisma/client` v7.9.0 (production dependency)
-  - `@prisma/adapter-neon` - Neon database adapter for Prisma 7
-  - `@neondatabase/serverless` - Neon serverless driver
-  - `ws` - WebSocket support for Neon
+### API Design Documentation
 
-- **Initialized Prisma ORM**:
-  - Generated `prisma/schema.prisma` with complete database schema
-  - Created `prisma.config.ts` for Prisma 7 configuration
-  - Created `prisma/README.md` with comprehensive setup documentation
+- **API_DESIGN.md Complete** (2026-07-25):
+  - Created comprehensive documentation (1000+ lines)
+  - Defined 39 API endpoints across 10 domains
+  - Specified request/response formats
+  - Documented authentication rules
+  - Defined validation rules and constraints
+  - Specified status codes and error handling
+  - Documented pagination, CORS, rate limiting
+  - Created API_QUICK_REFERENCE.md for quick lookup
+  - Mapped endpoints to layered architecture
 
-- **Created Database Schema**:
-  - Defined 6 enums: `InterviewStatus`, `InterviewDifficulty`, `QuestionType`, `QuestionStatus`, `SubmissionStatus`, `ResumeStatus`
-  - Created 6 models: `User`, `Interview`, `InterviewQuestion`, `Submission`, `Evaluation`, `Resume`
-  - Implemented all foreign key relationships and cascade delete behavior
-  - Added all indexes for query optimization
-  - Schema follows approved database design from `context/backend/03-DATABASE_DESIGN.md`
+### Authentication Module (Clerk Integration)
 
-- **Configured Environment Variables**:
-  - Added `DATABASE_URL` to `.env` with Neon PostgreSQL connection string
-  - Updated `.env.example` with PostgreSQL configuration examples
-  - Credentials properly excluded from version control
+- **Clerk Setup** (2026-07-25):
+  - Installed `@clerk/express` SDK
+  - Configured Clerk keys in `.env` (reused from frontend)
+  - Environment variables: `CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`
 
-- **Created Prisma Client Singleton** (`src/config/prisma.ts`):
-  - Singleton pattern for development hot reload
-  - Configured Neon adapter with connection pooling
-  - Configurable logging (verbose in dev, errors only in prod)
-  - WebSocket support for Neon serverless
+- **Middleware**:
+  - `initClerkMiddleware()` - Global Clerk middleware
+  - `requireAuthentication` - Protected route middleware
+  - `optionalAuthentication` - Optional auth for public routes
+  - Verifies Clerk session tokens
+  - Attaches `req.user` with `{ id, clerkId, email }`
 
-- **Database Connection and Migration** (2026-07-21):
-  - ✓ Connected to Neon PostgreSQL cloud database
-  - ✓ Created and applied migration `20260721182747_init_core`
-  - ✓ All 6 tables created successfully in production database
-  - ✓ All enums, indexes, and foreign key constraints applied
-  - ✓ Database schema verified and in sync with Prisma schema
+- **User Repository** (`repositories/user.repository.js`):
+  - `findByClerkId(clerkId)` - Find user by Clerk ID
+  - `createUser(data)` - Create new user
+  - `upsertUser(clerkId, data)` - Create or update user
+  - `updateUser(id, data)` - Update user profile
+  - Prisma-only data access
 
-- **Validation and Verification**:
-  - ✓ Schema validation passes (`npx prisma validate`)
-  - ✓ Prisma Client generated successfully
-  - ✓ TypeScript compilation passes with Prisma types
-  - ✓ ESLint passes (fixed line ending issues)
-  - ✓ Server starts successfully with database connection
-  - ✓ Health endpoint verified working
-  - ✓ Neon adapter properly configured and connecting
+- **Auth Service** (`services/auth.service.js`):
+  - `syncUser(clerkUser)` - Lazy user synchronization
+  - `getCurrentUser(userId)` - Get authenticated user
+  - `updateProfile(userId, data)` - Update user profile
+  - Business logic and validation
 
-- **Architecture Compliance**:
-  - ✓ No business logic added (as per requirements)
-  - ✓ No mock or seed data (as per requirements)
-  - ✓ Database credentials never committed
-  - ✓ Only approved models and enums implemented
-  - ✓ Production-ready cloud database setup
+- **Auth Controller & Routes**:
+  - `POST /api/v1/auth/sync` - Sync user from Clerk
+  - `GET /api/v1/auth/me` - Get current user (auto-sync)
+  - `PATCH /api/v1/auth/profile` - Update profile
 
-### Backend Rulebooks
+- **Validation**:
+  - Zod schemas for profile updates
+  - Generic validation middleware
+  - Field-level error messages
 
-- Defined backend foundation requirements.
-- Defined layered architecture rules:
+- **Documentation**:
+  - Created `AUTHENTICATION.md` (comprehensive guide)
+  - Lazy synchronization pattern documented
+  - Ownership verification pattern established
 
-  ```text
-  Route → Controller → Service → Repository → Prisma → PostgreSQL
-  ```
-
-- Defined MVP database design for:
-  - User
-  - Interview
-  - InterviewQuestion
-  - Submission
-  - Evaluation
-  - Resume
-- Defined Prisma schema, enums, relations, indexes, and migration strategy.
-- Defined shared REST API conventions, error envelopes, ownership rules, and endpoint map.
-
-### Clerk Authentication and User Synchronization (2026-07-21)
-
-Implemented Feature Spec `context/feature-specs/05-user-sync.md`.
-
-- **Installed Dependencies**:
-  - `@clerk/express` for Clerk session verification
-  - `jest`, `ts-jest`, `supertest` for unit and integration testing
-  - `zod` for validation schemas
-
-- **Clerk Configuration** (`server/src/config/index.ts`, `server/.env`):
-  - ✓ Configured `CLERK_SECRET_KEY` from frontend Clerk application
-  - ✓ Configured `CLERK_PUBLISHABLE_KEY` from frontend Clerk application
-  - ✓ Set `CLERK_AUTHORIZED_PARTIES` to `http://localhost:3000`
-  - Validated all required environment variables on startup
-  - Parsed authorized parties into an allowlist for cross-origin session tokens
-  - Optional `CLERK_JWT_KEY` support for networkless verification
-
-- **Authentication Middleware** (`server/src/middleware/clerk.middleware.ts`):
-  - Registered global `clerkMiddleware()` before protected routes
-  - Added `requireCurrentUser` using `getAuth(req, { acceptsToken: 'session_token' })`
-  - Syncs verified Clerk identity into local `User` records on each protected request
-  - Attaches minimal `{ id, clerkId }` context to `req.currentUser`
-
-- **User Layer**:
-  - `server/src/integrations/clerk/clerk.client.ts` — Clerk profile adapter
-  - `server/src/repositories/user.repository.ts` — Prisma-only persistence (`findByClerkId`, `upsertFromClerkProfile`, `findById`, `updateProfile`)
-  - `server/src/services/user.service.ts` — sync, public DTO logic, and profile updates
-  - `server/src/controllers/user.controller.ts` — HTTP handlers
-  - `server/src/routes/user.routes.ts` — protected user routes
-  - `server/src/validations/user.validation.ts` — Zod validation schemas
-  - `server/src/middleware/validate.ts` — Generic validation middleware
-
-- **API Endpoints**:
-  - `POST /api/v1/users/sync` — idempotent local user sync from verified Clerk token
-  - `GET /api/v1/users/me` — returns authenticated local user profile (syncs if missing)
-  - `PATCH /api/v1/users/me` — update user profile (displayName, imageUrl) with validation
-
-- **Error Handling**:
-  - Extended `AppError` with machine-readable codes (`UNAUTHENTICATED`, `USER_PROFILE_INCOMPLETE`, `VALIDATION_ERROR`, etc.)
-  - Standard error envelope: `{ success: false, error: { code, message } }`
-  - Validation errors include field-level details
-
-- **Frontend API Client** (`lib/api/client.ts`):
-  - Attaches Clerk session token via `Authorization: Bearer <token>`
-  - Exposes `getCurrentUser()` and `syncCurrentUser()` helpers
-  - Does not change Clerk sign-in/sign-up UI or Next.js route protection
-
-- **Tests** (`server/tests/`):
-  - Unit tests: user creation, idempotent sync, profile mapping, incomplete profile rejection, public DTO safety, profile updates
-  - Integration tests: sync/me/patch endpoints, 401 handling, public health access, `req.currentUser` context, validation errors
-  - All tests use mocked Clerk calls and repository layer (no live Clerk or production DB)
-  - ✅ **20 tests passing** (10 unit + 10 integration)
-
-- **Environment Configuration Complete** (2026-07-21):
-  - ✓ All Clerk keys added to `server/.env`
-  - ✓ Keys reused from frontend `.env.local` (same Clerk application)
-  - ✓ Backend can verify Clerk session tokens
-  - ✓ Ready for end-to-end testing with frontend authentication
-
-- **Verification Results**:
-  - ✓ TypeScript compilation: PASS
-  - ✓ ESLint: PASS
-  - ✓ Jest: 20 tests passed (2 suites)
-  - ✓ Server starts successfully with Clerk middleware
-  - ✓ Health endpoint accessible at http://localhost:5000/api/v1/health
-  - ✓ User sync and update endpoints ready for testing with real Clerk tokens
-  - ✓ Layered architecture preserved
-  - ✓ Validation working with Zod schemas
-  - ✓ No Clerk webhooks, interview/resume/report routes, or auth UI changes
+- **Verification**:
+  - ✅ Server starts with Clerk middleware
+  - ✅ Auth routes registered
+  - ✅ User sync working
+  - ✅ Ownership verification working
 
 ## In Progress
 
-- None. Database connected, migration applied, Clerk configured, and server running.
+- None. Question Module complete and ready for testing.
 
 ## Next Up
 
@@ -230,86 +159,181 @@ Implemented Feature Spec `context/feature-specs/05-user-sync.md`.
 
 ### After User Sync Testing
 
-1. **Interview Module API**: 
-   - Create interview endpoints (CRUD operations)
-   - Implement interview status transitions (DRAFT → IN_PROGRESS → COMPLETED)
-   - Add interview ownership validation
-
-2. **Question and Submission Management**: 
-   - Add questions to interviews
-   - Save candidate answers with auto-save
+1. **Submission Module API**: 
+   - Create submission endpoints (save answers, auto-save)
+   - Link submissions to questions and interviews
+   - Support code submissions with language selection
    - Handle draft and final submission statuses
 
-3. **Evaluation and Reports**: 
+2. **Evaluation and Reports**: 
    - Generate performance reports after interview completion
    - Calculate scores and provide feedback
    - Store evaluation results
+   - AI integration for automated feedback
 
-4. **Resume Management**: 
-   - Integrate Cloudinary for file uploads
-   - Store resume metadata in database
-   - Handle resume analysis when available
-
-5. **Frontend Integration**: 
+3. **Frontend Integration**: 
    - Connect dashboard to real API data
    - Implement interview creation flow
-   - Build interview session pages
+   - Build interview session pages with questions
    - Display reports and history
 
 ## Open Questions
 
 - ✅ **RESOLVED**: PostgreSQL setup - Using Neon cloud database (free tier)
 - ✅ **RESOLVED**: Clerk keys configuration - Using same keys from frontend
-- Resume file-storage provider (Cloudinary) integration will be configured when Resume module begins
+- ✅ **RESOLVED**: Backend language - Using JavaScript (ES Modules) instead of TypeScript
+- Resume file-storage (Cloudinary) credentials needed in `.env` for testing
 - Gemini evaluation integration deferred until interview flow is working end to end
 - Production deployment strategy and environment configuration to be determined
 
 ## Architecture Decisions
 
-- Clerk remains the authentication provider and source of identity truth.
-- The Express backend owns IntervueX application data and verifies Clerk identity for protected API routes.
-- The Next.js frontend does not access Prisma or PostgreSQL directly.
-- Controllers handle HTTP only.
-- Services contain business logic, state transitions, and ownership checks.
-- Repositories are the only layer allowed to access Prisma.
-- Request validation uses Zod before controllers execute.
-- All product routes are versioned under `/api/v1`.
-- API responses use a common success/error envelope.
-- Every user-owned resource must enforce ownership through the authenticated local user.
-- PostgreSQL stores relational application data; resume files must not be stored directly in the database.
-- No mock or demo data may be introduced into production UI or database setup.
-- Lazy user synchronization on authenticated requests replaces webhooks for MVP Phase 1.
+- **Backend Language**: JavaScript (ES Modules) - TypeScript backend deprecated and backed up
+- **Backend Location**: `backend/` folder (old TypeScript in `server/` removed)
+- Clerk remains the authentication provider and source of identity truth
+- The Express backend owns IntervueX application data and verifies Clerk identity for protected API routes
+- The Next.js frontend does not access Prisma or PostgreSQL directly
+- **Layered Architecture** (strictly enforced):
+  - **Routes**: Middleware registration only
+  - **Controllers**: HTTP handling only (request/response)
+  - **Services**: Business logic, state transitions, ownership checks
+  - **Repositories**: Database access only (Prisma calls only)
+- Request validation uses Zod before controllers execute
+- All product routes are versioned under `/api/v1`
+- API responses use a common success/error envelope
+- Every user-owned resource must enforce ownership through the authenticated local user (`req.user.id`)
+- PostgreSQL stores relational application data; resume files stored in Cloudinary
+- No mock or demo data in production UI or database setup
+- Lazy user synchronization on authenticated requests (no webhooks for MVP Phase 1)
+- Status transitions use dedicated endpoints (not direct updates)
+- Completed interviews are immutable (read-only)
 
 ## Session Notes
 
 - Frontend UI and Clerk authentication are production-ready
+- **Backend migrated from TypeScript to JavaScript** (ES Modules)
+  - Old TypeScript backend backed up in branch `backup/typescript-backend`
+  - New JavaScript backend in `backend/` folder
 - Backend Express.js foundation complete and verified
-- **Prisma ORM setup complete** (2026-07-20):
-  - Database schema created with all 6 models and 6 enums
-  - Prisma Client singleton configured
-  - Schema validation passing
-  - TypeScript compilation working with Prisma types
-  - Comprehensive documentation created
-- **Database connected and migrated** (2026-07-21):
-  - ✅ Neon PostgreSQL cloud database connected
-  - ✅ Migration `init_core` (20260721182747) created and applied
-  - ✅ All tables, enums, indexes, and constraints created successfully
-  - ✅ Neon adapter configured with connection pooling and WebSocket support
-  - ✅ Database schema verified and in sync
-  - ✅ **Fixed TypeScript build errors**: Installed `@types/ws`, corrected Neon adapter usage, fixed test setup read-only properties
-- **Clerk user sync complete** (2026-07-21):
-  - `@clerk/express` middleware integrated with authorized-party validation
-  - Protected routes verify session tokens and sync local users by `clerkId`
-  - `POST /users/sync` and `GET /users/me` implemented with standard envelopes
-  - Frontend API client added at `lib/api/client.ts`
-  - 12 tests passing with mocked Clerk and repository layers
-  - ✅ All Clerk keys configured in `server/.env`
-  - ✅ Server running successfully on port 5000
-  - ✅ Ready for end-to-end testing with frontend
-- **Build verification** (2026-07-21):
-  - ✅ Next.js production build successful
-  - ✅ Backend TypeScript compilation passes
-  - ✅ ESLint passes
-  - ✅ All 12 tests passing
-- **System fully operational**: Database, authentication, and API endpoints ready for feature development
-- Next meaningful unit: Test user sync end-to-end, then implement interview module CRUD
+- Database connected and migrated (Neon PostgreSQL)
+- Layered architecture strictly enforced
+- All modules following same pattern:
+  - Repository (Prisma access only)
+  - Service (business logic)
+  - Controller (HTTP handling)
+  - Routes (middleware + validation)
+  - Validation (Zod schemas)
+- **Current Status**: Question Module complete, ready for Submission Module
+- Next meaningful unit: Implement Submission Module (save answers, link to questions, auto-save)
+### Question Module
+
+- **Question Module Complete** (2026-07-28):
+  - Created question repository with 9 methods:
+    - `createQuestion`, `createManyQuestions`, `findById`
+    - `findByInterviewId`, `updateQuestion`, `deleteQuestion`
+    - `getNextOrderNumber`, `countByInterviewId`, `orderExists`
+  - Created question service with 5 methods:
+    - `createQuestion`, `createManyQuestions`, `getInterviewQuestions`
+    - `getQuestion`, `updateQuestion`, `deleteQuestion`
+  - Implemented question ordering logic:
+    - Auto-generate order numbers if not provided
+    - Validate uniqueness within interview
+    - Support manual ordering
+  - Created question controller (6 handlers)
+  - Created validation schemas with Zod:
+    - `createQuestionSchema` (interviewId, question, type, difficulty, order)
+    - `createBulkQuestionsSchema` (bulk insert for AI-generated questions)
+    - `updateQuestionSchema` (all fields optional)
+    - Parameter validation schemas (questionId, interviewId)
+  - Created question routes:
+    - `POST /api/v1/questions` - Create question
+    - `POST /api/v1/questions/bulk` - Create multiple questions (AI support)
+    - `GET /api/v1/questions/interview/:interviewId` - List questions (ordered)
+    - `GET /api/v1/questions/:id` - Get question details
+    - `PATCH /api/v1/questions/:id` - Update question
+    - `DELETE /api/v1/questions/:id` - Delete question
+  - Business rules enforced:
+    - Ownership verification through interview
+    - Completed interviews cannot have questions modified
+    - Question order unique within interview
+    - Auto-order generation support
+  - Bulk insert support (1-50 questions at once)
+  - Registered routes in `api.routes.js`
+  - Created `QUESTION_MODULE.md` documentation (comprehensive)
+  - ✅ Server verified working with all endpoints
+### User Module
+
+- **User Module Complete** (2026-07-25):
+  - Created user service (`getCurrentUser`, `updateProfile`, `formatUserProfile`)
+  - Created user controller (`getCurrentUser`, `updateProfile`)
+  - Created user validation (`updateProfileSchema` with Zod)
+  - Created user routes:
+    - `GET /api/v1/users/me` - Get current user profile
+    - `PATCH /api/v1/users/me` - Update profile
+  - All routes require authentication
+  - Ownership verification using `req.user.id` only
+  - Registered routes in `api.routes.js`
+  - Created `USER_MODULE.md` documentation
+  - Pattern established for user-owned resources
+
+### Resume Module
+
+- **Resume Module Complete** (2026-07-25):
+  - Installed `multer` and `cloudinary` packages
+  - Created Cloudinary utility (`uploadToCloudinary`, `deleteFromCloudinary`)
+  - Created upload middleware (Multer with memory storage)
+  - File validation: PDF, DOC, DOCX only, 5 MB max
+  - Created resume repository (CRUD operations)
+  - Created resume service (upload, list, get, replace, delete)
+  - Created resume controller and routes:
+    - `POST /api/v1/resumes` - Upload resume
+    - `GET /api/v1/resumes` - List user's resumes
+    - `GET /api/v1/resumes/:id` - Get resume details
+    - `PATCH /api/v1/resumes/:id` - Replace resume
+    - `DELETE /api/v1/resumes/:id` - Delete resume
+  - Ownership verification implemented
+  - Replace logic: upload new → update DB → delete old from Cloudinary
+  - Delete logic: delete from Cloudinary and DB
+  - Memory storage (no local files)
+  - Cloudinary configuration in `env.js`
+  - Created `RESUME_MODULE.md` documentation (1500+ lines)
+  - ⚠️ Requires Cloudinary credentials in `.env` for testing
+
+### Interview Module
+
+- **Interview Module Complete** (2026-07-26):
+  - Created interview repository with 8 methods:
+    - `createInterview`, `findById`, `findByIdAndUserId`
+    - `findByUserId`, `updateInterview`, `deleteInterview`
+    - `updateStatus`, `countByUserId`
+  - Created interview service with 7 methods:
+    - `createInterview`, `getInterview`, `listInterviews`
+    - `updateInterview`, `deleteInterview`
+    - `startInterview`, `completeInterview`
+  - Implemented status transition logic:
+    - DRAFT/SCHEDULED → IN_PROGRESS (via `startInterview`)
+    - IN_PROGRESS → COMPLETED (via `completeInterview`)
+  - Created interview controller (7 handlers)
+  - Created validation schemas with Zod:
+    - `createInterviewSchema` (title, role, company, experienceLevel, interviewType, duration, resumeId)
+    - `updateInterviewSchema` (all fields optional except status)
+    - `interviewQuerySchema` (pagination and filtering)
+  - Created interview routes:
+    - `POST /api/v1/interviews` - Create interview
+    - `GET /api/v1/interviews` - List interviews (paginated, filtered)
+    - `GET /api/v1/interviews/:id` - Get interview details
+    - `PATCH /api/v1/interviews/:id` - Update interview
+    - `DELETE /api/v1/interviews/:id` - Delete interview
+    - `POST /api/v1/interviews/:id/start` - Start interview
+    - `POST /api/v1/interviews/:id/complete` - Complete interview
+  - Business rules enforced:
+    - Ownership verification on all operations
+    - Resume ownership validation when linking
+    - Completed interviews cannot be updated/deleted
+    - Status transitions validated
+  - Pagination support (page, limit)
+  - Filtering support (status, role, company)
+  - Registered routes in `api.routes.js`
+  - Created `INTERVIEW_MODULE.md` documentation (1500+ lines)
+  - Created `INTERVIEW_MODULE_SUMMARY.md` summary
+  - ✅ Server verified working with all endpoints

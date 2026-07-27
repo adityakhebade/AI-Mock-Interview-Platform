@@ -1,103 +1,169 @@
-# 09 Interview Module
+# 09-interview-module.md
 
-## Goal
+# Interview Module
 
-Allow users to create, configure, manage, and track interview sessions.
+## Brief
+
+Allow authenticated users to create, configure, manage, and track interview sessions.
 
 ---
 
-## Tech Stack
+## Goal
+
+Implement complete interview management.
+
+---
+
+## Prerequisites
+
+✅ Authentication Module
+
+✅ User Module
+
+✅ Resume Module
+
+---
+
+# Tech Stack
 
 - Express.js
+- JavaScript (ES Modules)
 - Prisma ORM
 - PostgreSQL
 - Zod
 
 ---
 
-## Responsibilities
-
-- Create interview
-- Configure interview settings
-- Fetch interview details
-- Update interview
-- Delete interview
-- Start interview
-- Complete interview
-- Track interview status
-
----
-
-## Folder Structure
+# Folder Structure
 
 src/
-├── controllers/
-│   └── interview.controller.ts
-├── services/
-│   └── interview.service.ts
-├── repositories/
-│   └── interview.repository.ts
-├── routes/
-│   └── interview.routes.ts
-├── validations/
-│   └── interview.validation.ts
-└── dto/
-    └── interview.dto.ts
+
+controllers/
+    interview.controller.js
+
+services/
+    interview.service.js
+
+repositories/
+    interview.repository.js
+
+routes/
+    interview.routes.js
+
+validations/
+    interview.validation.js
 
 ---
 
-## Database Fields
+# Database
+
+Table
 
 Interview
 
-- id
-- userId
-- resumeId
-- title
-- role
-- company
-- experienceLevel
-- interviewType
-- duration
-- status
-- startedAt
-- completedAt
-- createdAt
-- updatedAt
+Fields
+
+id
+
+userId
+
+resumeId
+
+title
+
+role
+
+company
+
+experienceLevel
+
+interviewType
+
+duration
+
+status
+
+startedAt
+
+completedAt
+
+createdAt
+
+updatedAt
 
 ---
 
-## Interview Status
+# Interview Status
 
-- Draft
-- Scheduled
-- In Progress
-- Completed
-- Cancelled
+- DRAFT
+- SCHEDULED
+- IN_PROGRESS
+- COMPLETED
+- CANCELLED
 
 ---
 
-## API Endpoints
+# Routes
 
-POST   /api/v1/interviews
+POST /api/v1/interviews
 
-GET    /api/v1/interviews
+Description
 
-GET    /api/v1/interviews/:id
+Create a new interview.
 
-PATCH  /api/v1/interviews/:id
+---
+
+GET /api/v1/interviews
+
+Description
+
+Get all interviews of the logged-in user.
+
+---
+
+GET /api/v1/interviews/:id
+
+Description
+
+Get interview details.
+
+---
+
+PATCH /api/v1/interviews/:id
+
+Description
+
+Update interview details.
+
+---
 
 DELETE /api/v1/interviews/:id
 
-POST   /api/v1/interviews/:id/start
+Description
 
-POST   /api/v1/interviews/:id/complete
+Delete interview.
 
 ---
 
-## Validation
+POST /api/v1/interviews/:id/start
 
-Required Fields
+Description
+
+Start interview.
+
+---
+
+POST /api/v1/interviews/:id/complete
+
+Description
+
+Complete interview.
+
+---
+
+# Validation
+
+Required
 
 - title
 - role
@@ -112,23 +178,27 @@ Optional
 
 ---
 
-## Repository Methods
+# Repository
+
+Methods
 
 createInterview()
 
 findById()
 
-findByUser()
+findByUserId()
 
 updateInterview()
 
 deleteInterview()
 
-changeStatus()
+updateStatus()
 
 ---
 
-## Service Methods
+# Service
+
+Methods
 
 createInterview()
 
@@ -144,9 +214,18 @@ startInterview()
 
 completeInterview()
 
+Responsibilities
+
+- Validate ownership
+- Validate resume belongs to user
+- Manage interview status
+- Prevent invalid operations
+
 ---
 
-## Controller Methods
+# Controller
+
+Methods
 
 create()
 
@@ -156,7 +235,7 @@ get()
 
 update()
 
-delete()
+remove()
 
 start()
 
@@ -164,27 +243,28 @@ complete()
 
 ---
 
-## Business Rules
+# Business Rules
 
-- User must be authenticated.
-- User can access only their own interviews.
-- Resume must belong to the user.
-- Cannot edit a completed interview.
-- Cannot start an interview twice.
-- Status transitions must be valid.
+- Authentication required.
+- User can manage only their own interviews.
+- Resume must belong to the logged-in user.
+- Completed interviews cannot be edited.
+- Completed interviews cannot be restarted.
+- Only DRAFT or SCHEDULED interviews can be started.
+- Only IN_PROGRESS interviews can be completed.
 
 ---
 
-## Security
+# Security
 
 - Verify ownership.
 - Validate interview status transitions.
-- Prevent unauthorized access.
-- Use req.user.id only.
+- Never trust interview ID without ownership verification.
+- Always use authenticated user from auth middleware.
 
 ---
 
-## Deliverables
+# Deliverables
 
 ✅ Interview Repository
 
@@ -198,29 +278,36 @@ complete()
 
 ---
 
-## AI Execution Prompt
+# AI Execution Prompt
 
 Implement the Interview Module.
 
-Requirements:
+Requirements
 
-- Follow Controller → Service → Repository architecture.
+- Use JavaScript (ES Modules).
 - Use Prisma ORM.
 - Use Zod validation.
-- Support CRUD operations.
+- Implement CRUD operations.
 - Implement start and complete interview actions.
 - Validate interview status transitions.
-- Ensure users access only their own interviews.
-- Follow project coding standards.
+- Ensure users can access only their own interviews.
+- Follow Route → Controller → Service → Repository architecture.
+- Do not implement Question or AI modules.
 
 ---
 
-## Success Criteria
+# Success Criteria
 
-- Interview can be created.
-- Interview can be updated.
-- Interview can be started.
-- Interview can be completed.
-- Users see only their own interviews.
-- Invalid status transitions are rejected.
-- ESLint and TypeScript pass.
+✓ Interview created successfully
+
+✓ Interview updated successfully
+
+✓ Interview started successfully
+
+✓ Interview completed successfully
+
+✓ Users can access only their own interviews
+
+✓ Invalid status transitions rejected
+
+✓ Ready for Question Module

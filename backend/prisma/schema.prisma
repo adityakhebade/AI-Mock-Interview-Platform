@@ -1,4 +1,6 @@
 // Prisma Schema for IntervueX
+// Based on DATABASE_DESIGN.md
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,4 +10,172 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Models will be added in the next phase
+// ========================================
+// ENUMS
+// ========================================
+
+enum InterviewStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum QuestionType {
+  MCQ
+  TECHNICAL
+  CODING
+  HR
+  BEHAVIORAL
+}
+
+// ========================================
+// MODELS
+// ========================================
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  name      String
+  email     String   @unique
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  resumes    Resume[]
+  interviews Interview[]
+  reports    Report[]
+
+  @@index([clerkId])
+  @@index([email])
+  @@map("users")
+}
+
+model Resume {
+  id        String   @id @default(cuid())
+  userId    String
+  fileName  String
+  fileUrl   String
+  publicId  String
+  fileSize  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interviews Interview[]
+
+  @@index([userId])
+  @@index([publicId])
+  @@map("resumes")
+}
+
+model Interview {
+  id          String          @id @default(cuid())
+  userId      String
+  resumeId    String?
+  title       String
+  role        String
+  difficulty  Difficulty
+  language    String
+  duration    Int
+  status      InterviewStatus @default(DRAFT)
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  // Relations
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resume      Resume?      @relation(fields: [resumeId], references: [id], onDelete: SetNull)
+  questions   Question[]
+  submissions Submission[]
+  evaluation  Evaluation?
+  report      Report?
+
+  @@index([userId])
+  @@index([status])
+  @@index([userId, status])
+  @@map("interviews")
+}
+
+model Question {
+  id          String       @id @default(cuid())
+  interviewId String
+  question    String       @db.Text
+  type        QuestionType
+  difficulty  Difficulty
+  order       Int
+  createdAt   DateTime     @default(now())
+
+  // Relations
+  interview   Interview    @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  submissions Submission[]
+
+  @@unique([interviewId, order])
+  @@index([interviewId])
+  @@index([interviewId, order])
+  @@map("questions")
+}
+
+model Submission {
+  id          String   @id @default(cuid())
+  interviewId String
+  questionId  String
+  answer      String?  @db.Text
+  code        String?  @db.Text
+  language    String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  interview Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  question  Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([interviewId, questionId])
+  @@index([interviewId])
+  @@index([questionId])
+  @@index([interviewId, questionId])
+  @@map("submissions")
+}
+
+model Evaluation {
+  id          String   @id @default(cuid())
+  interviewId String   @unique
+  score       Int
+  strengths   String   @db.Text
+  weaknesses  String   @db.Text
+  feedback    String   @db.Text
+  createdAt   DateTime @default(now())
+
+  // Relations
+  interview Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+
+  @@index([interviewId])
+  @@map("evaluations")
+}
+
+model Report {
+  id            String   @id @default(cuid())
+  userId        String
+  interviewId   String   @unique
+  overallScore  Int
+  recommendation String  @db.Text
+  summary       String   @db.Text
+  createdAt     DateTime @default(now())
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interview Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([interviewId])
+  @@index([userId, createdAt])
+  @@map("reports")
+}

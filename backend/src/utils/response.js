@@ -7,13 +7,20 @@
  * Send success response
  * @param {Object} res - Express response object
  * @param {Object} data - Response data
+ * @param {string} message - Optional success message
  * @param {number} statusCode - HTTP status code (default: 200)
  */
-export const sendSuccess = (res, data, statusCode = 200) => {
-  res.status(statusCode).json({
+export const sendSuccess = (res, data, message = null, statusCode = 200) => {
+  const response = {
     success: true,
     data,
-  });
+  };
+  
+  if (message) {
+    response.message = message;
+  }
+  
+  res.status(statusCode).json(response);
 };
 
 /**

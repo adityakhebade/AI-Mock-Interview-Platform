@@ -1,66 +1,89 @@
-# 10 Question Module
+# 10-question-module.md
 
-## Goal
+# Question Module
 
-Manage interview questions for each interview session. Questions can be AI-generated or manually added and will be presented during the interview.
+## Brief
+
+Manage interview questions for each interview session. Questions can be created manually or by the AI Module and are linked to a specific interview.
 
 ---
 
-## Tech Stack
+## Goal
+
+Implement complete question management.
+
+---
+
+## Prerequisites
+
+✅ Authentication Module
+
+✅ Interview Module
+
+---
+
+# Tech Stack
 
 - Express.js
+- JavaScript (ES Modules)
 - Prisma ORM
 - PostgreSQL
 - Zod
 
 ---
 
-## Responsibilities
-
-- Generate interview questions
-- Store questions
-- Retrieve questions
-- Update question status
-- Support question ordering
-
----
-
-## Folder Structure
+# Folder Structure
 
 src/
-├── controllers/
-│   └── question.controller.ts
-├── services/
-│   └── question.service.ts
-├── repositories/
-│   └── question.repository.ts
-├── routes/
-│   └── question.routes.ts
-├── validations/
-│   └── question.validation.ts
-└── dto/
-    └── question.dto.ts
+
+controllers/
+    question.controller.js
+
+services/
+    question.service.js
+
+repositories/
+    question.repository.js
+
+routes/
+    question.routes.js
+
+validations/
+    question.validation.js
 
 ---
 
-## Database Fields
+# Database
+
+Table
 
 Question
 
-- id
-- interviewId
-- question
-- type
-- difficulty
-- expectedAnswer
-- order
-- status
-- createdAt
-- updatedAt
+Fields
+
+id
+
+interviewId
+
+question
+
+type
+
+difficulty
+
+expectedAnswer
+
+order
+
+status
+
+createdAt
+
+updatedAt
 
 ---
 
-## Question Types
+# Question Types
 
 - Technical
 - Behavioral
@@ -70,7 +93,7 @@ Question
 
 ---
 
-## Difficulty Levels
+# Difficulty Levels
 
 - Easy
 - Medium
@@ -78,47 +101,81 @@ Question
 
 ---
 
-## Status
+# Status
 
-- Pending
-- Answered
-- Skipped
+- PENDING
+- ANSWERED
+- SKIPPED
 
 ---
 
-## API Endpoints
+# Routes
 
-POST   /api/v1/questions/generate
+POST /api/v1/questions
 
-GET    /api/v1/questions/interview/:interviewId
+Description
 
-GET    /api/v1/questions/:id
+Create a question manually.
 
-PATCH  /api/v1/questions/:id
+---
+
+GET /api/v1/questions/interview/:interviewId
+
+Description
+
+Get all questions for an interview.
+
+---
+
+GET /api/v1/questions/:id
+
+Description
+
+Get a specific question.
+
+---
+
+PATCH /api/v1/questions/:id
+
+Description
+
+Update a question.
+
+---
 
 DELETE /api/v1/questions/:id
 
+Description
+
+Delete a question.
+
 ---
 
-## Validation
+# Validation
 
 Required
 
 - interviewId
+- question
 - type
 - difficulty
 
 Optional
 
 - expectedAnswer
+- order
 
 ---
 
-## Repository Methods
+# Repository
 
-createQuestions()
+Methods
 
-findByInterview()
+createQuestion()
+
+createManyQuestions()
+
+findByInterviewId()
 
 findById()
 
@@ -128,9 +185,13 @@ deleteQuestion()
 
 ---
 
-## Service Methods
+# Service
 
-generateQuestions()
+Methods
+
+createQuestion()
+
+createManyQuestions()
 
 getInterviewQuestions()
 
@@ -138,11 +199,20 @@ updateQuestion()
 
 deleteQuestion()
 
+Responsibilities
+
+- Manage interview questions
+- Validate ownership
+- Maintain question order
+- Prevent invalid updates
+
 ---
 
-## Controller Methods
+# Controller
 
-generate()
+Methods
+
+create()
 
 list()
 
@@ -150,21 +220,22 @@ get()
 
 update()
 
-delete()
+remove()
 
 ---
 
-## Business Rules
+# Business Rules
 
 - Questions belong to one interview.
-- Interview must belong to authenticated user.
-- Questions are ordered.
-- Order must be unique within an interview.
-- Questions cannot be edited after interview completion.
+- Interview must belong to the authenticated user.
+- Questions are ordered within an interview.
+- Order must be unique for each interview.
+- Completed interviews cannot have questions modified.
+- AI-generated questions are created by the AI Module and stored using this module.
 
 ---
 
-## Security
+# Security
 
 - Verify interview ownership.
 - Prevent access to other users' questions.
@@ -173,7 +244,7 @@ delete()
 
 ---
 
-## Deliverables
+# Deliverables
 
 ✅ Question Repository
 
@@ -187,27 +258,33 @@ delete()
 
 ---
 
-## AI Execution Prompt
+# AI Execution Prompt
 
 Implement the Question Module.
 
-Requirements:
+Requirements
 
-- Follow Controller → Service → Repository architecture.
+- Use JavaScript (ES Modules).
+- Implement CRUD operations for interview questions.
 - Store questions linked to interviews.
-- Support AI-generated and manual questions.
-- Implement CRUD operations.
-- Validate ownership using req.user.id.
+- Support manual creation and bulk insertion for AI-generated questions.
+- Validate ownership using the authenticated user.
 - Use Prisma ORM and Zod validation.
-- Follow project coding standards.
+- Follow Route → Controller → Service → Repository architecture.
+- Do not implement AI question generation.
 
 ---
 
-## Success Criteria
+# Success Criteria
 
-- Questions are generated.
-- Questions are stored correctly.
-- Questions are retrieved in order.
-- Users access only their own interview questions.
-- CRUD operations work.
-- ESLint and TypeScript pass.
+✓ Questions created successfully
+
+✓ Questions stored correctly
+
+✓ Questions retrieved in order
+
+✓ Users access only their own interview questions
+
+✓ CRUD operations work
+
+✓ Ready for Submission Module

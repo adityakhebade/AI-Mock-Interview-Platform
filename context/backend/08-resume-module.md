@@ -1,85 +1,141 @@
-# 08 Resume Module
+# 08-resume-module.md
 
-## Goal
+# Resume Module
 
-Allow authenticated users to upload, manage, and delete resumes. Store resume metadata in PostgreSQL and files in Cloudinary.
+## Brief
+
+Allow authenticated users to upload, view, update, and delete resumes. Store files in Cloudinary and metadata in PostgreSQL.
 
 ---
 
-## Tech Stack
+## Goal
+
+Implement complete resume management.
+
+---
+
+## Prerequisites
+
+✅ Authentication Module
+
+✅ User Module
+
+✅ Cloudinary Configured
+
+---
+
+# Tech Stack
 
 - Express.js
+- JavaScript (ES Modules)
 - Prisma ORM
 - PostgreSQL
-- Cloudinary
 - Multer
+- Cloudinary
 - Zod
 
 ---
 
-## Responsibilities
-
-- Upload resume
-- Replace existing resume
-- Delete resume
-- Fetch user's resumes
-- Validate file type and size
-- Ensure ownership
-
----
-
-## Folder Structure
+# Folder Structure
 
 src/
-├── controllers/
-│   └── resume.controller.ts
-├── services/
-│   └── resume.service.ts
-├── repositories/
-│   └── resume.repository.ts
-├── routes/
-│   └── resume.routes.ts
-├── validations/
-│   └── resume.validation.ts
-├── middleware/
-│   └── upload.middleware.ts
-└── utils/
-    └── cloudinary.ts
+
+controllers/
+    resume.controller.js
+
+services/
+    resume.service.js
+
+repositories/
+    resume.repository.js
+
+routes/
+    resume.routes.js
+
+validations/
+    resume.validation.js
+
+middleware/
+    upload.middleware.js
+
+utils/
+    cloudinary.js
 
 ---
 
-## Database Fields
+# Database
+
+Table
 
 Resume
 
-- id
-- userId
-- fileName
-- originalName
-- fileUrl
-- publicId
-- fileSize
-- mimeType
-- uploadedAt
-- updatedAt
+Fields
+
+id
+
+userId
+
+fileName
+
+originalName
+
+fileUrl
+
+publicId
+
+fileSize
+
+mimeType
+
+uploadedAt
+
+updatedAt
 
 ---
 
-## API Endpoints
+# Routes
 
-POST   /api/v1/resumes
+POST /api/v1/resumes
 
-GET    /api/v1/resumes
+Description
 
-GET    /api/v1/resumes/:id
+Upload a resume.
 
-PATCH  /api/v1/resumes/:id
+---
+
+GET /api/v1/resumes
+
+Description
+
+Get all resumes of the logged-in user.
+
+---
+
+GET /api/v1/resumes/:id
+
+Description
+
+Get a specific resume.
+
+---
+
+PATCH /api/v1/resumes/:id
+
+Description
+
+Replace an existing resume.
+
+---
 
 DELETE /api/v1/resumes/:id
 
+Description
+
+Delete a resume.
+
 ---
 
-## Upload Flow
+# Upload Flow
 
 User
 
@@ -101,29 +157,31 @@ Save Metadata in PostgreSQL
 
 ↓
 
-Return Resume
+Return Resume Details
 
 ---
 
-## Validation
+# Validation
 
-Allowed Types
+Allowed File Type
 
 - PDF
 
-Max Size
+Maximum Size
 
-- 5 MB (configurable)
+- 5 MB
 
-Reject:
+Reject
 
-- Invalid file type
-- Oversized files
 - Missing file
+- Invalid file type
+- File exceeds size limit
 
 ---
 
-## Repository Methods
+# Repository
+
+Methods
 
 createResume()
 
@@ -137,7 +195,9 @@ deleteResume()
 
 ---
 
-## Service Methods
+# Service
+
+Methods
 
 uploadResume()
 
@@ -149,15 +209,24 @@ replaceResume()
 
 deleteResume()
 
+Responsibilities
+
+- Upload file to Cloudinary
+- Save metadata
+- Delete old Cloudinary file when replacing
+- Verify ownership
+
 ---
 
-## Controller Methods
+# Controller
+
+Methods
 
 upload()
 
-get()
-
 list()
+
+get()
 
 replace()
 
@@ -165,31 +234,31 @@ remove()
 
 ---
 
-## Business Rules
+# Business Rules
 
-- User must be authenticated.
-- User can manage only their own resumes.
-- Delete old Cloudinary file before replacing.
+- Authentication required.
+- Users can access only their own resumes.
 - Store only metadata in PostgreSQL.
-- Never store files locally.
+- Store files only in Cloudinary.
+- Delete old Cloudinary file before replacing.
+- Delete Cloudinary file when deleting a resume.
 
 ---
 
-## Security
+# Security
 
 - Verify ownership.
 - Validate MIME type.
 - Validate file size.
-- Prevent path traversal.
-- Delete orphan Cloudinary files.
+- Never trust resume ID without ownership check.
 
 ---
 
-## Deliverables
-
-✅ Cloudinary Configuration
+# Deliverables
 
 ✅ Multer Middleware
+
+✅ Cloudinary Integration
 
 ✅ Resume Repository
 
@@ -203,29 +272,39 @@ remove()
 
 ---
 
-## AI Execution Prompt
+# AI Execution Prompt
 
 Implement the Resume Module.
 
-Requirements:
+Requirements
 
-- Upload PDFs using Multer.
+- Use JavaScript (ES Modules).
+- Upload PDF files using Multer.
 - Store files in Cloudinary.
-- Save metadata in PostgreSQL using Prisma.
+- Store metadata in PostgreSQL using Prisma.
 - Implement CRUD operations.
-- Delete Cloudinary file when deleting/replacing a resume.
-- Follow Controller → Service → Repository architecture.
-- Use authenticated user from req.user.
+- Delete Cloudinary files when replacing or deleting resumes.
+- Use authenticated user from auth middleware.
+- Follow Route → Controller → Service → Repository architecture.
 - Validate requests using Zod.
+- Do not implement Interview or AI modules.
 
 ---
 
-## Success Criteria
+# Success Criteria
 
-- Resume uploads successfully.
-- File stored in Cloudinary.
-- Metadata stored in PostgreSQL.
-- Users access only their own resumes.
-- Replace and delete operations work correctly.
-- No local file storage.
-- ESLint and TypeScript pass.
+✓ Resume uploaded successfully
+
+✓ File stored in Cloudinary
+
+✓ Metadata stored in PostgreSQL
+
+✓ Users can access only their own resumes
+
+✓ Replace works correctly
+
+✓ Delete works correctly
+
+✓ No local file storage
+
+✓ Ready for Interview Module

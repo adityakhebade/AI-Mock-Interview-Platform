@@ -4,16 +4,9 @@
 
 ## Brief
 
-Manage the authenticated user's profile.
+Manage the authenticated user's profile information.
 
-This module allows users to:
-
-- View profile
-- Update profile
-- Store profile information
-- Maintain account settings
-
-This module only works after Authentication Module is completed.
+Authentication and user synchronization are already handled by the Authentication Module. This module only retrieves and updates profile data.
 
 ---
 
@@ -26,8 +19,6 @@ Implement user profile management.
 # Prerequisites
 
 ✅ Authentication Module
-
-✅ Clerk Authentication
 
 ✅ User Table
 
@@ -60,7 +51,7 @@ Table
 
 User
 
-Fields Used
+Fields
 
 id
 
@@ -80,11 +71,11 @@ updatedAt
 
 # Routes
 
-GET /api/v1/users/profile
+GET /api/v1/users/me
 
 Description
 
-Return logged-in user's profile.
+Return authenticated user's profile.
 
 Authentication
 
@@ -92,11 +83,11 @@ Required
 
 ---
 
-PATCH /api/v1/users/profile
+PATCH /api/v1/users/me
 
 Description
 
-Update profile.
+Update authenticated user's profile.
 
 Authentication
 
@@ -113,7 +104,7 @@ Request
 
 # Repository
 
-Create Methods
+Methods
 
 findById()
 
@@ -123,40 +114,31 @@ updateProfile()
 
 # Service
 
-Create Methods
+Methods
 
-getProfile()
+getCurrentUser()
 
 updateProfile()
 
 Responsibilities
 
-- Fetch authenticated user
+- Get authenticated user
 - Update profile
-- Validate ownership
-- Return updated data
+- Validate input
 
 ---
 
 # Controller
 
-Create Methods
+Methods
 
-getProfile()
+getCurrentUser()
 
 updateProfile()
-
-Responsibilities
-
-- Receive request
-- Call service
-- Return response
 
 ---
 
 # Validation
-
-Validate
 
 Name
 
@@ -172,49 +154,27 @@ Image URL
 
 # Business Rules
 
-Only logged-in user can update profile.
-
-Email cannot be changed.
-
-ClerkId cannot be changed.
-
-Never update another user's profile.
-
----
-
-# Response
-
-Success
-
-{
-    "success": true,
-    "data": {}
-}
-
-Error
-
-{
-    "success": false,
-    "message": "Profile not found"
-}
+- User can update only their own profile.
+- Email cannot be updated.
+- ClerkId cannot be updated.
+- Always use req.currentUser.id.
+- Never accept userId from the client.
 
 ---
 
 # Security
 
-Authentication required.
-
-Use authenticated user ID.
-
-Never trust user ID from frontend.
+- Authentication required.
+- Authorization required.
+- Validate all input.
 
 ---
 
 # Deliverables
 
-✅ Get Profile API
+✅ GET /users/me
 
-✅ Update Profile API
+✅ PATCH /users/me
 
 ✅ Validation
 
@@ -229,13 +189,10 @@ Implement the User Module.
 Requirements
 
 - Use JavaScript (ES Modules).
-- Create user routes.
-- Create controllers.
-- Create services.
-- Create repositories.
-- Implement GET /users/profile.
-- Implement PATCH /users/profile.
-- Use authenticated user.
+- Create user routes, controller, service, repository, and validation.
+- Implement GET /api/v1/users/me.
+- Implement PATCH /api/v1/users/me.
+- Use authenticated user from auth middleware.
 - Follow Route → Controller → Service → Repository architecture.
 - Do not implement Resume or Interview modules.
 
@@ -243,7 +200,7 @@ Requirements
 
 # Success Criteria
 
-✓ User profile fetched
+✓ Current user returned
 
 ✓ Profile updated
 
