@@ -7,6 +7,7 @@ import questionRoutes from './question.routes.js';
 import submissionRoutes from './submission.routes.js';
 import evaluationRoutes from './evaluation.routes.js';
 import reportRoutes from './report.routes.js';
+import dashboardRoutes from './dashboard.routes.js';
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ router.use('/questions', questionRoutes);
 router.use('/submissions', submissionRoutes);
 router.use('/evaluations', evaluationRoutes);
 router.use('/reports', reportRoutes);
+router.use('/dashboard', dashboardRoutes);
 
 // Health check for API
 router.get('/health', (req, res) => {
