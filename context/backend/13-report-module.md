@@ -1,80 +1,129 @@
-# 13 Report Module
+# 13-report-module.md
 
-## Goal
+# Report Module
 
-Generate and manage interview reports based on completed evaluations. Reports provide users with detailed performance insights and interview analytics.
+## Brief
+
+Generate and manage interview reports based on completed evaluations. Reports provide users with a structured summary of their interview performance and analytics.
 
 ---
 
-## Tech Stack
+## Goal
+
+Implement complete report management.
+
+---
+
+## Prerequisites
+
+✅ Authentication Module
+
+✅ Evaluation Module
+
+---
+
+# Tech Stack
 
 - Express.js
+- JavaScript (ES Modules)
 - Prisma ORM
 - PostgreSQL
 - Zod
 
 ---
 
-## Responsibilities
-
-- Generate interview report
-- Fetch report
-- List all reports
-- Share/download report (future)
-- Maintain report history
-
----
-
-## Folder Structure
+# Folder Structure
 
 src/
-├── controllers/
-│   └── report.controller.ts
-├── services/
-│   └── report.service.ts
-├── repositories/
-│   └── report.repository.ts
-├── routes/
-│   └── report.routes.ts
-├── validations/
-│   └── report.validation.ts
-└── dto/
-    └── report.dto.ts
+
+controllers/
+    report.controller.js
+
+services/
+    report.service.js
+
+repositories/
+    report.repository.js
+
+routes/
+    report.routes.js
+
+validations/
+    report.validation.js
 
 ---
 
-## Database Fields
+# Database
+
+Table
 
 Report
 
-- id
-- interviewId
-- evaluationId
-- userId
-- title
-- summary
-- strengths
-- weaknesses
-- recommendations
-- overallScore
-- generatedAt
-- createdAt
+Fields
+
+id
+
+interviewId
+
+evaluationId
+
+userId
+
+title
+
+summary
+
+strengths
+
+weaknesses
+
+recommendations
+
+overallScore
+
+generatedAt
+
+createdAt
+
+updatedAt
 
 ---
 
-## API Endpoints
+# Routes
 
-POST   /api/v1/reports/:interviewId
+POST /api/v1/reports/:interviewId
 
-GET    /api/v1/reports
+Description
 
-GET    /api/v1/reports/:id
+Generate a report from an existing evaluation.
+
+---
+
+GET /api/v1/reports
+
+Description
+
+Get all reports of the authenticated user.
+
+---
+
+GET /api/v1/reports/:id
+
+Description
+
+Get a specific report.
+
+---
 
 DELETE /api/v1/reports/:id
 
+Description
+
+Delete a report.
+
 ---
 
-## Validation
+# Validation
 
 Required
 
@@ -82,19 +131,25 @@ Required
 
 ---
 
-## Repository Methods
+# Repository
+
+Methods
 
 createReport()
 
 findById()
 
-findByUser()
+findByInterviewId()
+
+findByUserId()
 
 deleteReport()
 
 ---
 
-## Service Methods
+# Service
+
+Methods
 
 generateReport()
 
@@ -104,38 +159,49 @@ listReports()
 
 deleteReport()
 
+Responsibilities
+
+- Verify evaluation exists
+- Generate report from evaluation data
+- Store report
+- Prevent duplicate reports
+
 ---
 
-## Controller Methods
+# Controller
+
+Methods
 
 generate()
 
-get()
-
 list()
 
-delete()
+get()
+
+remove()
 
 ---
 
-## Business Rules
+# Business Rules
 
-- Report can only be generated after evaluation.
+- Report can only be generated after evaluation is completed.
 - One report per interview.
 - Users can access only their own reports.
 - Reports are read-only after generation.
+- Reports use evaluation data as the source of truth.
 
 ---
 
-## Security
+# Security
 
 - Verify user ownership.
 - Prevent duplicate report generation.
 - Never expose reports belonging to another user.
+- Always use authenticated user from auth middleware.
 
 ---
 
-## Deliverables
+# Deliverables
 
 ✅ Report Repository
 
@@ -149,26 +215,32 @@ delete()
 
 ---
 
-## AI Execution Prompt
+# AI Execution Prompt
 
 Implement the Report Module.
 
-Requirements:
+Requirements
 
-- Follow Controller → Service → Repository architecture.
-- Generate report using Evaluation data.
-- Store report in PostgreSQL.
-- Support report retrieval and listing.
+- Use JavaScript (ES Modules).
+- Generate reports from completed evaluation data.
+- Store reports in PostgreSQL.
+- Implement report retrieval, listing, and deletion.
 - Ensure one report per interview.
-- Validate ownership using req.user.id.
+- Validate ownership using the authenticated user.
 - Use Prisma ORM and Zod validation.
+- Follow Route → Controller → Service → Repository architecture.
+- Do not implement AI-generated summaries or feedback.
 
 ---
 
-## Success Criteria
+# Success Criteria
 
-- Report is generated successfully.
-- Report stores evaluation summary.
-- Users can view only their own reports.
-- Duplicate reports are prevented.
-- ESLint and TypeScript pass.
+✓ Report generated successfully
+
+✓ Report stored in PostgreSQL
+
+✓ Users can access only their own reports
+
+✓ Duplicate reports prevented
+
+✓ Ready for Dashboard Module

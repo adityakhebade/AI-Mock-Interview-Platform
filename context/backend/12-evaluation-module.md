@@ -1,88 +1,134 @@
-# 12 Evaluation Module
+# 12-evaluation-module.md
 
-## Goal
+# Evaluation Module
 
-Evaluate candidate submissions and generate scores, feedback, strengths, and weaknesses for each interview.
+## Brief
+
+Manage interview evaluation results. Store, retrieve, and manage AI-generated interview scores and feedback.
 
 ---
 
-## Tech Stack
+## Goal
+
+Implement evaluation management.
+
+---
+
+## Prerequisites
+
+✅ Authentication Module
+
+✅ Interview Module
+
+✅ Submission Module
+
+---
+
+# Tech Stack
 
 - Express.js
+- JavaScript (ES Modules)
 - Prisma ORM
 - PostgreSQL
 - Zod
 
 ---
 
-## Responsibilities
-
-- Evaluate submissions
-- Calculate interview score
-- Generate feedback
-- Store evaluation results
-- Track evaluation status
-
----
-
-## Folder Structure
+# Folder Structure
 
 src/
-├── controllers/
-│   └── evaluation.controller.ts
-├── services/
-│   └── evaluation.service.ts
-├── repositories/
-│   └── evaluation.repository.ts
-├── routes/
-│   └── evaluation.routes.ts
-├── validations/
-│   └── evaluation.validation.ts
-└── dto/
-    └── evaluation.dto.ts
+
+controllers/
+    evaluation.controller.js
+
+services/
+    evaluation.service.js
+
+repositories/
+    evaluation.repository.js
+
+routes/
+    evaluation.routes.js
+
+validations/
+    evaluation.validation.js
 
 ---
 
-## Database Fields
+# Database
+
+Table
 
 Evaluation
 
-- id
-- interviewId
-- userId
-- overallScore
-- technicalScore
-- communicationScore
-- problemSolvingScore
-- strengths
-- weaknesses
-- feedback
-- status
-- evaluatedAt
-- createdAt
+Fields
+
+id
+
+interviewId
+
+userId
+
+overallScore
+
+technicalScore
+
+communicationScore
+
+problemSolvingScore
+
+strengths
+
+weaknesses
+
+feedback
+
+status
+
+evaluatedAt
+
+createdAt
+
+updatedAt
 
 ---
 
-## Evaluation Status
+# Evaluation Status
 
-- Pending
-- Processing
-- Completed
-- Failed
-
----
-
-## API Endpoints
-
-POST   /api/v1/evaluations/:interviewId
-
-GET    /api/v1/evaluations/:interviewId
-
-GET    /api/v1/evaluations
+- PENDING
+- PROCESSING
+- COMPLETED
+- FAILED
 
 ---
 
-## Validation
+# Routes
+
+POST /api/v1/evaluations/:interviewId
+
+Description
+
+Create an evaluation request for a completed interview.
+
+---
+
+GET /api/v1/evaluations/:interviewId
+
+Description
+
+Get evaluation for an interview.
+
+---
+
+GET /api/v1/evaluations
+
+Description
+
+Get all evaluations of the authenticated user.
+
+---
+
+# Validation
 
 Required
 
@@ -90,31 +136,46 @@ Required
 
 ---
 
-## Repository Methods
+# Repository
+
+Methods
 
 createEvaluation()
 
-findByInterview()
+findByInterviewId()
+
+findByUserId()
 
 updateEvaluation()
 
 ---
 
-## Service Methods
+# Service
 
-evaluateInterview()
+Methods
 
-calculateScore()
-
-generateFeedback()
+requestEvaluation()
 
 getEvaluation()
 
+listEvaluations()
+
+updateEvaluation()
+
+Responsibilities
+
+- Verify interview completion
+- Prevent duplicate evaluations
+- Store evaluation results
+- Manage evaluation status
+
 ---
 
-## Controller Methods
+# Controller
 
-evaluate()
+Methods
+
+create()
 
 get()
 
@@ -122,24 +183,26 @@ list()
 
 ---
 
-## Business Rules
+# Business Rules
 
 - One evaluation per interview.
 - Interview must be completed.
-- User can view only their own evaluation.
-- Evaluation cannot run twice unless explicitly regenerated.
+- User can access only their own evaluations.
+- Evaluation cannot be regenerated unless explicitly requested.
+- AI-generated scores and feedback are saved through this module.
 
 ---
 
-## Security
+# Security
 
 - Verify interview ownership.
-- Validate interview completion.
 - Prevent duplicate evaluations.
+- Validate interview completion.
+- Always use authenticated user from auth middleware.
 
 ---
 
-## Deliverables
+# Deliverables
 
 ✅ Evaluation Repository
 
@@ -153,25 +216,33 @@ list()
 
 ---
 
-## AI Execution Prompt
+# AI Execution Prompt
 
 Implement the Evaluation Module.
 
-Requirements:
+Requirements
 
-- Follow Controller → Service → Repository architecture.
-- Evaluate completed interviews only.
-- Calculate section-wise and overall scores.
-- Store strengths, weaknesses, and feedback.
-- Ensure one evaluation per interview.
+- Use JavaScript (ES Modules).
+- Implement evaluation CRUD operations.
+- Store AI-generated scores and feedback.
+- Prevent duplicate evaluations.
+- Ensure users access only their own evaluations.
 - Use Prisma ORM and Zod validation.
+- Follow Route → Controller → Service → Repository architecture.
+- Do not implement AI evaluation logic.
 
 ---
 
-## Success Criteria
+# Success Criteria
 
-- Evaluation is generated successfully.
-- Scores are stored in PostgreSQL.
-- Users access only their own evaluations.
-- Duplicate evaluations are prevented.
-- ESLint and TypeScript pass.
+✓ Evaluation created successfully
+
+✓ Scores stored in PostgreSQL
+
+✓ Feedback stored successfully
+
+✓ Users access only their own evaluations
+
+✓ Duplicate evaluations prevented
+
+✓ Ready for Report Module

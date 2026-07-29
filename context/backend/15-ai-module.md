@@ -1,142 +1,249 @@
-# 15 AI Module
+# 15-ai-module.md
 
-## Goal
+# AI Module
 
-Provide centralized AI capabilities for IntervueX, including question generation, resume analysis, answer evaluation, interview feedback, and report generation.
+## Brief
+
+Provide centralized AI capabilities for IntervueX. This module communicates with Gemini/OpenAI, generates structured responses, validates them, and returns them to the appropriate modules.
 
 ---
 
-## Tech Stack
+## Goal
 
-- Gemini API (or OpenAI)
+Implement a reusable AI service.
+
+---
+
+## Prerequisites
+
+✅ Authentication Module
+
+✅ Resume Module
+
+✅ Interview Module
+
+✅ Question Module
+
+✅ Submission Module
+
+✅ Evaluation Module
+
+✅ Report Module
+
+---
+
+# Tech Stack
+
 - Express.js
-- Prisma ORM
+- JavaScript (ES Modules)
+- Gemini API (or OpenAI)
 - Zod
 
 ---
 
-## Responsibilities
-
-- Generate interview questions
-- Analyze resume
-- Evaluate answers
-- Generate interview feedback
-- Generate final report
-- Handle prompt management
-- Handle AI response parsing
-- Retry failed AI requests
-
----
-
-## Folder Structure
+# Folder Structure
 
 src/
-├── controllers/
-│   └── ai.controller.ts
-├── services/
-│   ├── ai.service.ts
-│   ├── prompt.service.ts
-│   └── gemini.service.ts
-├── repositories/
-│   └── ai.repository.ts (Optional)
-├── routes/
-│   └── ai.routes.ts
-├── prompts/
-│   ├── resume.prompt.ts
-│   ├── interview.prompt.ts
-│   ├── evaluation.prompt.ts
-│   └── report.prompt.ts
-└── utils/
-    └── ai-parser.ts
+
+controllers/
+    ai.controller.js
+
+services/
+    ai.service.js
+    gemini.service.js
+    prompt.service.js
+
+routes/
+    ai.routes.js
+
+prompts/
+    resume.prompt.js
+    question.prompt.js
+    evaluation.prompt.js
+    report.prompt.js
+
+utils/
+    aiParser.js
 
 ---
 
-## AI Features
+# AI Features
 
 - Resume Analysis
-- Question Generation
+- Interview Question Generation
 - Answer Evaluation
 - Interview Feedback
-- Report Generation
+- Report Summary
 
 ---
 
-## API Endpoints
+# Routes
 
 POST /api/v1/ai/resume-analysis
 
-POST /api/v1/ai/questions
+Description
 
-POST /api/v1/ai/evaluate
-
-POST /api/v1/ai/report
+Analyze uploaded resume.
 
 ---
 
-## Service Methods
+POST /api/v1/ai/questions
+
+Description
+
+Generate interview questions.
+
+---
+
+POST /api/v1/ai/evaluate
+
+Description
+
+Evaluate interview submissions.
+
+---
+
+POST /api/v1/ai/report
+
+Description
+
+Generate report summary.
+
+---
+
+# Services
+
+## ai.service.js
+
+Methods
 
 analyzeResume()
 
 generateQuestions()
 
-evaluateAnswers()
+evaluateInterview()
 
 generateReport()
 
----
+Responsibilities
 
-## Business Rules
-
-- User must be authenticated.
-- AI requests require valid interview/resume.
-- Validate AI response before saving.
-- Log AI failures.
-- Retry failed requests.
+- Coordinate AI operations
+- Validate requests
+- Parse AI responses
+- Handle retries
 
 ---
 
-## Security
+## gemini.service.js
+
+Responsibilities
+
+- Call Gemini/OpenAI API
+- Handle API errors
+- Return raw AI response
+
+---
+
+## prompt.service.js
+
+Responsibilities
+
+- Load prompts
+- Replace placeholders
+- Return final prompt
+
+---
+
+# Prompt Templates
+
+resume.prompt.js
+
+question.prompt.js
+
+evaluation.prompt.js
+
+report.prompt.js
+
+Each prompt should return JSON only.
+
+---
+
+# AI Parser
+
+Responsibilities
+
+- Parse AI response
+- Validate JSON format
+- Return structured data
+- Throw validation errors
+
+---
+
+# Business Rules
+
+- Authentication required.
+- AI requests require valid interview or resume.
+- AI responses must be validated before use.
+- Retry failed AI requests.
+- Never save data directly from this module.
+- Calling modules are responsible for database updates.
+
+---
+
+# Security
 
 - Store API keys in environment variables.
-- Never expose AI keys.
+- Never expose API keys.
 - Validate AI responses.
 - Apply rate limiting.
+- Log AI failures safely.
 
 ---
 
-## Deliverables
+# Deliverables
 
 ✅ AI Service
 
-✅ Prompt Templates
-
 ✅ Gemini/OpenAI Integration
 
-✅ Response Parser
+✅ Prompt Service
+
+✅ Prompt Templates
+
+✅ AI Parser
 
 ✅ AI Routes
 
 ---
 
-## AI Execution Prompt
+# AI Execution Prompt
 
 Implement the AI Module.
 
-Requirements:
+Requirements
 
+- Use JavaScript (ES Modules).
+- Integrate Gemini or OpenAI.
 - Create reusable AI service.
-- Integrate Gemini/OpenAI.
-- Keep prompts separate.
-- Validate responses before saving.
-- Reuse the service across Interview, Question, Evaluation, and Report modules.
+- Keep prompts in separate files.
+- Parse and validate AI responses.
+- Implement retry logic for failed requests.
+- Return structured JSON responses.
 - Follow Controller → Service architecture.
+- Do not save data directly to the database.
 
 ---
 
-## Success Criteria
+# Success Criteria
 
-- Resume analysis works.
-- Questions are generated.
-- Answers are evaluated.
-- Reports are generated.
-- Invalid AI responses are handled gracefully.
+✓ Resume analysis works
+
+✓ Interview questions generated
+
+✓ Answers evaluated
+
+✓ Report summary generated
+
+✓ Invalid AI responses handled
+
+✓ Ready for Socket.IO Module

@@ -4,6 +4,8 @@ import userRoutes from './user.routes.js';
 import resumeRoutes from './resume.routes.js';
 import interviewRoutes from './interview.routes.js';
 import questionRoutes from './question.routes.js';
+import submissionRoutes from './submission.routes.js';
+import evaluationRoutes from './evaluation.routes.js';
 
 const router = express.Router();
 
@@ -13,6 +15,8 @@ router.use('/users', userRoutes);
 router.use('/resumes', resumeRoutes);
 router.use('/interviews', interviewRoutes);
 router.use('/questions', questionRoutes);
+router.use('/submissions', submissionRoutes);
+router.use('/evaluations', evaluationRoutes);
 
 // Health check for API
 router.get('/health', (req, res) => {

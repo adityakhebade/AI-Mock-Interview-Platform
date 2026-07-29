@@ -1,89 +1,151 @@
-# 11 Submission Module
+# 11-submission-module.md
 
-## Goal
+# Submission Module
 
-Capture, store, update, and manage candidate responses for each interview question.
+## Brief
+
+Capture, store, update, and manage candidate responses for interview questions. Support text, code, and voice answers with automatic saving throughout the interview.
 
 ---
 
-## Tech Stack
+## Goal
+
+Implement complete submission management.
+
+---
+
+## Prerequisites
+
+✅ Authentication Module
+
+✅ Interview Module
+
+✅ Question Module
+
+---
+
+# Tech Stack
 
 - Express.js
+- JavaScript (ES Modules)
 - Prisma ORM
 - PostgreSQL
 - Zod
 
 ---
 
-## Responsibilities
-
-- Save answer
-- Update answer
-- Auto-save responses
-- Retrieve submitted answers
-- Mark question as answered
-- Resume interrupted interviews
-
----
-
-## Folder Structure
+# Folder Structure
 
 src/
-├── controllers/
-│   └── submission.controller.ts
-├── services/
-│   └── submission.service.ts
-├── repositories/
-│   └── submission.repository.ts
-├── routes/
-│   └── submission.routes.ts
-├── validations/
-│   └── submission.validation.ts
-└── dto/
-    └── submission.dto.ts
+
+controllers/
+    submission.controller.js
+
+services/
+    submission.service.js
+
+repositories/
+    submission.repository.js
+
+routes/
+    submission.routes.js
+
+validations/
+    submission.validation.js
 
 ---
 
-## Database Fields
+# Database
+
+Table
 
 Submission
 
-- id
-- interviewId
-- questionId
-- userId
-- answer
-- language
-- code
-- status
-- submittedAt
-- updatedAt
+Fields
+
+id
+
+interviewId
+
+questionId
+
+userId
+
+answer
+
+code
+
+language
+
+audioUrl
+
+status
+
+submittedAt
+
+updatedAt
 
 ---
 
-## Submission Status
+# Submission Status
 
-- Draft
-- Saved
-- Submitted
+- DRAFT
+- SAVED
+- SUBMITTED
 
 ---
 
-## API Endpoints
+# Routes
 
-POST   /api/v1/submissions
+POST /api/v1/submissions
 
-PATCH  /api/v1/submissions/:id
+Description
 
-GET    /api/v1/submissions/interview/:interviewId
+Create a submission or auto-save the first answer.
 
-GET    /api/v1/submissions/:id
+---
+
+PATCH /api/v1/submissions/:id
+
+Description
+
+Update an existing submission.
+
+---
+
+POST /api/v1/submissions/:id/submit
+
+Description
+
+Finalize a submission.
+
+---
+
+GET /api/v1/submissions/interview/:interviewId
+
+Description
+
+Get all submissions for an interview.
+
+---
+
+GET /api/v1/submissions/:id
+
+Description
+
+Get a specific submission.
+
+---
 
 DELETE /api/v1/submissions/:id
 
+Description
+
+Delete a submission.
+
 ---
 
-## Validation
+# Validation
 
 Required
 
@@ -95,16 +157,21 @@ Optional
 - answer
 - code
 - language
+- audioUrl
 
 ---
 
-## Repository Methods
+# Repository
+
+Methods
 
 createSubmission()
 
 findById()
 
-findByInterview()
+findByInterviewId()
+
+findByQuestionId()
 
 updateSubmission()
 
@@ -112,54 +179,73 @@ deleteSubmission()
 
 ---
 
-## Service Methods
+# Service
 
-saveAnswer()
+Methods
 
-autoSave()
+saveSubmission()
 
-submitAnswer()
+updateSubmission()
 
-getSubmissions()
+submitSubmission()
+
+getSubmission()
+
+listSubmissions()
 
 deleteSubmission()
 
+Responsibilities
+
+- Auto-save responses
+- Store text, code, and audio answers
+- Prevent duplicate submissions
+- Lock editing after submission
+- Verify ownership
+
 ---
 
-## Controller Methods
+# Controller
+
+Methods
 
 create()
 
 update()
 
+submit()
+
 list()
 
 get()
 
-delete()
+remove()
 
 ---
 
-## Business Rules
+# Business Rules
 
 - One submission per question.
+- Auto-save updates the existing submission.
 - User can edit only before interview completion.
-- Auto-save should update existing submission.
-- Submission belongs to authenticated user.
-- Interview must be active.
+- Submitted responses cannot be modified.
+- Submission belongs to the authenticated user.
+- Question must belong to the interview.
+- Interview must be in progress.
 
 ---
 
-## Security
+# Security
 
 - Verify interview ownership.
-- Verify question belongs to interview.
+- Verify question ownership.
 - Prevent duplicate submissions.
-- Use req.user.id only.
+- Always use authenticated user from auth middleware.
+- Never trust userId from the client.
 
 ---
 
-## Deliverables
+# Deliverables
 
 ✅ Submission Repository
 
@@ -173,26 +259,37 @@ delete()
 
 ---
 
-## AI Execution Prompt
+# AI Execution Prompt
 
 Implement the Submission Module.
 
-Requirements:
+Requirements
 
-- Follow Controller → Service → Repository architecture.
-- Store text and code answers.
-- Support auto-save and final submission.
+- Use JavaScript (ES Modules).
+- Implement CRUD operations.
+- Support text, code, and audio answers.
+- Auto-save responses.
+- Support final submission.
 - Prevent duplicate submissions.
-- Ensure ownership validation.
+- Validate ownership.
 - Use Prisma ORM and Zod validation.
+- Follow Route → Controller → Service → Repository architecture.
+- Do not implement AI evaluation.
 
 ---
 
-## Success Criteria
+# Success Criteria
 
-- Answers save successfully.
-- Auto-save updates existing submission.
-- One submission per question.
-- Users access only their own submissions.
-- Interview completion locks editing.
-- ESLint and TypeScript pass.
+✓ Answers saved successfully
+
+✓ Auto-save updates existing submission
+
+✓ Final submission works
+
+✓ One submission per question
+
+✓ Users access only their own submissions
+
+✓ Editing locked after submission
+
+✓ Ready for Evaluation Module
